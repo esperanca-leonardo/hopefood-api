@@ -4,6 +4,9 @@ import br.com.esperanca.hopefood.api.exceptionhandler.enuns.TipoErro;
 import br.com.esperanca.hopefood.domain.exceptions.EntidadeEmUsoException;
 import br.com.esperanca.hopefood.domain.exceptions.EntidadeNaoEncontradaException;
 import br.com.esperanca.hopefood.domain.exceptions.NegocioException;
+import com.fasterxml.jackson.databind.JsonMappingException.Reference;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.stream.Collectors;
+
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -21,6 +26,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
       HttpMessageNotReadableException ex, HttpHeaders headers,
       HttpStatus status, WebRequest request) {
 
+    Throwable causaRaiz = ExceptionUtils.getRootCause(ex);
+
+    if (causaRaiz instanceof InvalidFormatException) {
+     return handleInvalidFormatException((InvalidFormatException) causaRaiz,
+       headers, status, request
+     );
+    }
     TipoErro tipoErro = TipoErro.PROBLEMA_DE_SINTAXE;
 
     final String MENSAGEM = "Corpo da requisição está inválido. " +
@@ -28,6 +40,36 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     Erro erro = criarErroBuilder(tipoErro, status, MENSAGEM).build();
 
     return handleExceptionInternal(ex, erro, headers, status, request);
+  }
+
+  private String campoInvalido(InvalidFormatException invalidFormatException) {
+    return invalidFormatException
+      .getPath()
+      .stream()
+      .map(Reference::getFieldName)
+      .collect(Collectors.joining("."));
+  }
+
+  @ExceptionHandler(InvalidFormatException.class)
+  private ResponseEntity<Object> handleInvalidFormatException(
+      InvalidFormatException invalidFormatException, HttpHeaders headers,
+      HttpStatus status, WebRequest request) {
+
+    TipoErro tipoErro = TipoErro.PROBLEMA_DE_SINTAXE;
+
+    String campoInvalido = campoInvalido(invalidFormatException);
+    String mensagem = "A propriedade '%s' recebeu o valor '%s', que é do tipo " +
+      "inválido. Por favor, corrija para o tipo '%s' e tente novamente";
+
+    mensagem = String.format(mensagem, campoInvalido,
+      invalidFormatException.getValue(),
+      invalidFormatException.getTargetType().getSimpleName()
+    );
+    Erro erro = criarErroBuilder(tipoErro, status, mensagem).build();
+
+    return handleExceptionInternal(invalidFormatException, erro, headers,
+      status, request
+    );
   }
 
   @Override
