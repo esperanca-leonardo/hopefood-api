@@ -10,7 +10,9 @@ public enum TipoErro {
 
   ENTIDADE_EM_USO("/entidade-em-uso", "Entidade em uso"),
 
-  ERRO_NEGOCIO("/erro-negocio", "Violação de regra de negócio");
+  ERRO_NEGOCIO("/erro-negocio", "Violação de regra de negócio"),
+
+  PROBLEMA_DE_SINTAXE("/problema-sintaxe", "Problema de sintaxe");
 
   private String uri;
 
