@@ -5,6 +5,15 @@ import lombok.Getter;
 @Getter
 public enum TipoErro {
 
+  TIPO_DE_DADO_INCORRETO("/tipo-de-dado-incorreto",
+    "Tipo de dado incorreto"),
+
+  PROPRIEDADE_NAO_ENCONTRADA("/propriedade-nao-encontrada",
+    "Propriedade não encontrada"),
+
+  PROPRIEDADE_IGNORADA("/propriedade-ignorada",
+    "Propriedade ignorada"),
+
   ENTIDADE_NAO_ENCONTRADA("/entidade-nao-encontrada",
     "Entidade não encontrada"),
 
