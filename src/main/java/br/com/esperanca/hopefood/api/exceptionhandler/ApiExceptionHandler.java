@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.exc.IgnoredPropertyException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +17,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -72,6 +75,40 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     Erro erro = criarErroBuilder(tipoErro, status, MENSAGEM).build();
 
     return handleExceptionInternal(ex, erro, headers, status, request);
+  }
+
+  public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(
+      MethodArgumentTypeMismatchException methodArgumentTypeMismatchException,
+      HttpHeaders httpHeaders, HttpStatus httpStatus, WebRequest webRequest) {
+
+    TipoErro tipoErro = TipoErro.PARAMETRO_INVALIDO;
+
+    String mensagem = "O parâmetro de URL '%s' recebeu o valor '%s', que é de " +
+      "um tipo inválido. Corriga e informe um valor compatível com o tipo %s";
+
+    mensagem = String.format(mensagem,
+      methodArgumentTypeMismatchException.getName(),
+      methodArgumentTypeMismatchException.getValue(),
+      Objects.requireNonNull(
+        methodArgumentTypeMismatchException.getRequiredType()
+      ).getSimpleName()
+    );
+    Erro erro = criarErroBuilder(tipoErro, httpStatus, mensagem).build();
+
+    return handleExceptionInternal(methodArgumentTypeMismatchException, erro,
+      httpHeaders, httpStatus, webRequest);
+  }
+
+  @Override
+  protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex,
+      HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+    if (ex instanceof MethodArgumentTypeMismatchException) {
+      return handleMethodArgumentTypeMismatchException(
+        (MethodArgumentTypeMismatchException) ex, headers, status, request
+      );
+    }
+    return super.handleTypeMismatch(ex, headers, status, request);
   }
 
   @ExceptionHandler(InvalidFormatException.class)
