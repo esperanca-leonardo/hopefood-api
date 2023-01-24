@@ -173,7 +173,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
       EntidadeNaoEncontradaException exception, WebRequest request) {
 
     var status = HttpStatus.NOT_FOUND;
-    var tipoErro = TipoErro.ENTIDADE_NAO_ENCONTRADA;
+    var tipoErro = TipoErro.RECURSO_NAO_ENCONTRADO;
 
     String mensagem = exception.getMessage();
     var erro = criarErroBuilder(tipoErro, status, mensagem).build();
@@ -188,7 +188,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
       EntidadeEmUsoException exception, WebRequest request) {
 
     var status = HttpStatus.CONFLICT;
-    var tipoErro = TipoErro.ENTIDADE_EM_USO;
+    var tipoErro = TipoErro.RECURSO_EM_USO;
 
     String mensagem = exception.getMessage();
     var erro = criarErroBuilder(tipoErro, status, mensagem).build();
