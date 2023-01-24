@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
   @Override
-  protected ResponseEntity<Object> handleExceptionInternal(Exception ex,
+  protected ResponseEntity<Object> handleExceptionInternal(Exception exception,
       Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
     if (body == null) {
@@ -43,195 +43,188 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         .titulo((String) body)
         .build();
     }
-    return super.handleExceptionInternal(ex, body, headers, status, request);
+    return super.handleExceptionInternal(exception, body, headers, status, request);
   }
 
   @Override
   protected ResponseEntity<Object> handleHttpMessageNotReadable(
-      HttpMessageNotReadableException ex, HttpHeaders headers,
+      HttpMessageNotReadableException exception, HttpHeaders headers,
       HttpStatus status, WebRequest request) {
 
-    Throwable causaRaiz = ExceptionUtils.getRootCause(ex);
+    Throwable causaRaiz = ExceptionUtils.getRootCause(exception);
 
     if (causaRaiz instanceof InvalidFormatException) {
-     return handleInvalidFormatException((InvalidFormatException) causaRaiz,
-       headers, status, request
+     return tratarInvalidFormat((InvalidFormatException) causaRaiz, headers,
+       status, request
      );
     }
     else if (causaRaiz instanceof IgnoredPropertyException) {
-      return handleIgnoredPropertyException(
-        (IgnoredPropertyException) causaRaiz, headers, status, request
+      return tratarIgnoredProperty((IgnoredPropertyException) causaRaiz,
+        headers, status, request
       );
     }
     else if (causaRaiz instanceof UnrecognizedPropertyException) {
-      return handleUnrecognizedPropertyException(
+      return tratarUnrecognizedProperty(
         (UnrecognizedPropertyException) causaRaiz, headers, status, request
       );
     }
-    final String MENSAGEM = "Corpo da requisição está inválido. " +
+    var mensagem = "Corpo da requisição está inválido. " +
       "Verifique erro de sintaxe.";
 
-    TipoErro tipoErro = TipoErro.PROBLEMA_DE_SINTAXE;
-    Erro erro = criarErroBuilder(tipoErro, status, MENSAGEM).build();
+    var tipoErro = TipoErro.PROBLEMA_DE_SINTAXE;
+    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
 
-    return handleExceptionInternal(ex, erro, headers, status, request);
+    return handleExceptionInternal(exception, erro, headers, status, request);
   }
 
-  public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(
-      MethodArgumentTypeMismatchException methodArgumentTypeMismatchException,
-      HttpHeaders httpHeaders, HttpStatus httpStatus, WebRequest webRequest) {
+  public ResponseEntity<Object> tratarMethodArgumentTypeMismatch(
+      MethodArgumentTypeMismatchException exception, HttpHeaders headers,
+      HttpStatus status, WebRequest request) {
 
-    TipoErro tipoErro = TipoErro.PARAMETRO_INVALIDO;
+    var tipoErro = TipoErro.PARAMETRO_INVALIDO;
 
-    String mensagem = "O parâmetro de URL '%s' recebeu o valor '%s', que é de " +
+    var mensagem = "O parâmetro de URL '%s' recebeu o valor '%s', que é de " +
       "um tipo inválido. Corriga e informe um valor compatível com o tipo %s";
 
-    mensagem = String.format(mensagem,
-      methodArgumentTypeMismatchException.getName(),
-      methodArgumentTypeMismatchException.getValue(),
-      Objects.requireNonNull(
-        methodArgumentTypeMismatchException.getRequiredType()
-      ).getSimpleName()
-    );
-    Erro erro = criarErroBuilder(tipoErro, httpStatus, mensagem).build();
+    String parametroUrl = exception.getName();
+    Object valorEnviado = exception.getValue();
 
-    return handleExceptionInternal(methodArgumentTypeMismatchException, erro,
-      httpHeaders, httpStatus, webRequest);
+    String tipoCorreto = Objects.requireNonNull(
+      exception.getRequiredType()
+    ).getSimpleName();
+
+    mensagem = String.format(mensagem, parametroUrl, valorEnviado, tipoCorreto);
+    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
+
+    return handleExceptionInternal(exception, erro, headers, status, request);
   }
 
   @Override
-  protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex,
-      HttpHeaders headers, HttpStatus status, WebRequest request) {
+  protected ResponseEntity<Object> handleTypeMismatch(
+      TypeMismatchException exception, HttpHeaders headers, HttpStatus status,
+      WebRequest request) {
 
-    if (ex instanceof MethodArgumentTypeMismatchException) {
-      return handleMethodArgumentTypeMismatchException(
-        (MethodArgumentTypeMismatchException) ex, headers, status, request
+    if (exception instanceof MethodArgumentTypeMismatchException) {
+      return tratarMethodArgumentTypeMismatch(
+        (MethodArgumentTypeMismatchException) exception, headers, status,
+        request
       );
     }
-    return super.handleTypeMismatch(ex, headers, status, request);
+    return super.handleTypeMismatch(exception, headers, status, request);
   }
 
   @ExceptionHandler(InvalidFormatException.class)
-  public ResponseEntity<Object> handleInvalidFormatException(
-    InvalidFormatException invalidFormatException, HttpHeaders headers,
-    HttpStatus status, WebRequest request) {
+  public ResponseEntity<Object> tratarInvalidFormat(
+      InvalidFormatException exception, HttpHeaders headers, HttpStatus status,
+      WebRequest request) {
 
-    TipoErro tipoErro = TipoErro.TIPO_DE_DADO_INCORRETO;
+    var tipoErro = TipoErro.TIPO_DE_DADO_INCORRETO;
+    String campoInvalido = buscarCampoInvalido(exception.getPath());
 
-    String campoInvalido = campoInvalido(invalidFormatException.getPath());
-    String mensagem = "A propriedade '%s' recebeu o valor '%s', que é do tipo " +
+    var mensagem = "A propriedade '%s' recebeu o valor '%s', que é do tipo " +
       "inválido. Por favor, corrija para o tipo '%s' e tente novamente";
 
-    mensagem = String.format(mensagem, campoInvalido,
-      invalidFormatException.getValue(),
-      invalidFormatException.getTargetType().getSimpleName()
+    mensagem = String.format(mensagem, campoInvalido, exception.getValue(),
+      exception.getTargetType().getSimpleName()
     );
-    Erro erro = criarErroBuilder(tipoErro, status, mensagem).build();
+    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
 
-    return handleExceptionInternal(invalidFormatException, erro, headers,
-      status, request
-    );
+    return handleExceptionInternal(exception, erro, headers, status, request);
   }
 
   @ExceptionHandler(UnrecognizedPropertyException.class)
-  public ResponseEntity<Object> handleUnrecognizedPropertyException(
-      UnrecognizedPropertyException unrecognizedPropertyException,
-      HttpHeaders httpHeaders, HttpStatus status, WebRequest request) {
+  public ResponseEntity<Object> tratarUnrecognizedProperty(
+      UnrecognizedPropertyException exception, HttpHeaders headers,
+      HttpStatus status, WebRequest request) {
 
-    TipoErro tipoErro = TipoErro.PROPRIEDADE_NAO_ENCONTRADA;
+    var tipoErro = TipoErro.PROPRIEDADE_NAO_ENCONTRADA;
 
-    String campoInvalido = campoInvalido(unrecognizedPropertyException.getPath());
-    String mensagem = "A propriedade '%s' não existe. Remova essa propriedade " +
+    String campoInvalido = buscarCampoInvalido(exception.getPath());
+
+    var mensagem = "A propriedade '%s' não existe. Remova essa propriedade " +
       "e tente novamente";
 
     mensagem = String.format(mensagem, campoInvalido);
+    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
 
-    Erro erro = criarErroBuilder(tipoErro, status, mensagem).build();
-
-    return handleExceptionInternal(unrecognizedPropertyException, erro,
-      httpHeaders, status, request
-    );
+    return handleExceptionInternal(exception, erro, headers, status, request);
   }
 
   @ExceptionHandler(IgnoredPropertyException.class)
-  public ResponseEntity<Object> handleIgnoredPropertyException(
-      IgnoredPropertyException ignoredPropertyException, HttpHeaders headers,
+  public ResponseEntity<Object> tratarIgnoredProperty(
+      IgnoredPropertyException exception, HttpHeaders headers,
       HttpStatus status, WebRequest request) {
 
-    TipoErro tipoErro = TipoErro.PROPRIEDADE_IGNORADA;
+    var tipoErro = TipoErro.PROPRIEDADE_IGNORADA;
 
-    String campoInvalido = campoInvalido(ignoredPropertyException.getPath());
-    String mensagem = "A propriedade '%s' não esta mais sendo utilizada. " +
+    String campoInvalido = buscarCampoInvalido(exception.getPath());
+
+    var mensagem = "A propriedade '%s' não esta mais sendo utilizada. " +
       "Remova essa propriedade e tente novamente.";
 
     mensagem = String.format(mensagem, campoInvalido);
+    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
 
-    Erro erro = criarErroBuilder(tipoErro, status, mensagem).build();
-
-    return handleExceptionInternal(ignoredPropertyException, erro, headers,
-      status, request
-    );
+    return handleExceptionInternal(exception, erro, headers, status, request);
   }
 
   @ExceptionHandler(EntidadeNaoEncontradaException.class)
-  public ResponseEntity<?> handleEntidadeNaoEncontradaException(
-      EntidadeNaoEncontradaException entidadeNaoEncontradaException,
-      WebRequest webRequest) {
+  public ResponseEntity<?> tratarEntidadeNaoEncontrada(
+      EntidadeNaoEncontradaException exception, WebRequest request) {
 
-    HttpStatus httpStatus = HttpStatus.NOT_FOUND;
-    TipoErro tipoErro = TipoErro.ENTIDADE_NAO_ENCONTRADA;
+    var status = HttpStatus.NOT_FOUND;
+    var tipoErro = TipoErro.ENTIDADE_NAO_ENCONTRADA;
 
-    String mensagem = entidadeNaoEncontradaException.getMessage();
-    Erro erro = criarErroBuilder(tipoErro, httpStatus, mensagem).build();
+    String mensagem = exception.getMessage();
+    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
 
-    return handleExceptionInternal(entidadeNaoEncontradaException, erro,
-      new HttpHeaders(), httpStatus, webRequest
+    return handleExceptionInternal(exception, erro, new HttpHeaders(), status,
+      request
     );
   }
 
   @ExceptionHandler(EntidadeEmUsoException.class)
-  public ResponseEntity<?> handleEntidadeEmUsoException(
-      EntidadeEmUsoException entidadeEmUsoException, WebRequest webRequest) {
+  public ResponseEntity<?> tratarEntidadeEmUso(
+      EntidadeEmUsoException exception, WebRequest request) {
 
-    HttpStatus httpStatus = HttpStatus.CONFLICT;
-    TipoErro tipoErro = TipoErro.ENTIDADE_EM_USO;
+    var status = HttpStatus.CONFLICT;
+    var tipoErro = TipoErro.ENTIDADE_EM_USO;
 
-    String mensagem = entidadeEmUsoException.getMessage();
-    Erro erro = criarErroBuilder(tipoErro, httpStatus, mensagem).build();
+    String mensagem = exception.getMessage();
+    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
 
-    return handleExceptionInternal(entidadeEmUsoException, erro,
-      new HttpHeaders(), httpStatus, webRequest
+    return handleExceptionInternal(exception, erro, new HttpHeaders(), status,
+      request
     );
   }
 
   @ExceptionHandler(NegocioException.class)
-  public ResponseEntity<?> handleNegocioException(
-      NegocioException negocioException, WebRequest webRequest) {
+  public ResponseEntity<?> tratarNegocio(NegocioException exception,
+      WebRequest request) {
 
-    HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-    TipoErro tipoErro = TipoErro.ERRO_NEGOCIO;
+    var status = HttpStatus.BAD_REQUEST;
+    var tipoErro = TipoErro.ERRO_NEGOCIO;
 
-    String mensagem = negocioException.getMessage();
-    Erro erro = criarErroBuilder(tipoErro, httpStatus, mensagem).build();
+    String mensagem = exception.getMessage();
+    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
 
-    return handleExceptionInternal(negocioException, erro, new HttpHeaders(),
-      httpStatus, webRequest
+    return handleExceptionInternal(exception, erro, new HttpHeaders(), status,
+      request
     );
   }
 
   private Erro.ErroBuilder criarErroBuilder(TipoErro tipoErro,
-      HttpStatus httpStatus, String mensagem) {
+      HttpStatus status, String mensagem) {
 
     return Erro.builder()
-      .status(httpStatus.value())
+      .status(status.value())
       .tipo(tipoErro.getUri())
       .titulo(tipoErro.getTitulo())
       .detalhe(mensagem);
   }
 
-  private String campoInvalido(List<Reference> references) {
-    return references
-      .stream()
+  private String buscarCampoInvalido(List<Reference> references) {
+    return references.stream()
       .map(Reference::getFieldName)
       .collect(Collectors.joining("."));
   }
