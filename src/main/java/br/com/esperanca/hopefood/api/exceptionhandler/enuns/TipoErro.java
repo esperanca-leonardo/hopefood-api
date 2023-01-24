@@ -5,6 +5,8 @@ import lombok.Getter;
 @Getter
 public enum TipoErro {
 
+  ERRO_DE_SISTEMA("/erro-sistema", "Erro no Sistema"),
+
   PARAMETRO_INVALIDO("/parametro-invalido", "Parâmetro inválido"),
 
   TIPO_DE_DADO_INCORRETO("/tipo-de-dado-incorreto",

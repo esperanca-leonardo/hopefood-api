@@ -92,6 +92,25 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     return handleExceptionInternal(exception, erro, headers, status, request);
   }
 
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<Object> tratarExcecoesNaoCapturadas(Exception exception,
+      WebRequest request) {
+
+    var status = HttpStatus.INTERNAL_SERVER_ERROR;
+    var tipoErro = TipoErro.ERRO_DE_SISTEMA;
+
+    var mensagem = "Ocorreu um erro interno no sistema. Tente novamente e se o " +
+      "problema persistir, entre em contato conosco";
+
+    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
+
+    exception.printStackTrace();
+
+    return handleExceptionInternal(exception, erro, new HttpHeaders(), status,
+      request
+    );
+  }
+
   public ResponseEntity<Object> tratarMethodArgumentTypeMismatch(
       MethodArgumentTypeMismatchException exception, HttpHeaders headers,
       HttpStatus status, WebRequest request) {
