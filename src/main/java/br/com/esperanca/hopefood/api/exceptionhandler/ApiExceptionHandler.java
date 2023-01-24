@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.List;
@@ -72,6 +73,20 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
       "Verifique erro de sintaxe.";
 
     var tipoErro = TipoErro.PROBLEMA_DE_SINTAXE;
+    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
+
+    return handleExceptionInternal(exception, erro, headers, status, request);
+  }
+
+  @Override
+  protected ResponseEntity<Object> handleNoHandlerFoundException(
+      NoHandlerFoundException exception, HttpHeaders headers, HttpStatus status,
+      WebRequest request) {
+
+    var tipoErro = TipoErro.RECURSO_NAO_ENCONTRADO;
+    var mensagem = "O recurso '%s' que você tentou acessar, é inexistente";
+
+    mensagem = String.format(mensagem, exception.getRequestURL());
     var erro = criarErroBuilder(tipoErro, status, mensagem).build();
 
     return handleExceptionInternal(exception, erro, headers, status, request);
