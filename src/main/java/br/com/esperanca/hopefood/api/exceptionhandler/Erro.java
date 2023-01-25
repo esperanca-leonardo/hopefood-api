@@ -20,8 +20,8 @@ public class Erro {
   @JsonProperty("title")
   private String titulo;
 
-  @JsonProperty("detail")
-  private String detalhe;
+  @JsonProperty("description")
+  private String descricao;
 
   @JsonProperty("timestamp")
   private LocalDateTime dataHora;
