@@ -21,6 +21,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -36,12 +37,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
       body = Erro.builder()
         .status(status.value())
         .titulo(status.getReasonPhrase())
+        .dataHora(LocalDateTime.now())
         .build();
     }
     else if (body instanceof String) {
       body = Erro.builder()
         .status(status.value())
         .titulo((String) body)
+        .dataHora(LocalDateTime.now())
         .build();
     }
     return super.handleExceptionInternal(exception, body, headers, status, request);
@@ -254,6 +257,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
       .status(status.value())
       .tipo(tipoErro.getUri())
       .titulo(tipoErro.getTitulo())
+      .dataHora(LocalDateTime.now())
       .detalhe(mensagem);
   }
 

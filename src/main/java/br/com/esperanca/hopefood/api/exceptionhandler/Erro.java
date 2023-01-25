@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -20,4 +22,7 @@ public class Erro {
 
   @JsonProperty("detail")
   private String detalhe;
+
+  @JsonProperty("timestamp")
+  private LocalDateTime dataHora;
 }
