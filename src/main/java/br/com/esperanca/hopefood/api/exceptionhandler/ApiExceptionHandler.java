@@ -29,6 +29,10 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
+  private static final String MENSAGEM_GENERICA = "Ocorreu um erro interno " +
+    "no sistema. Tente novamente e se o problema persistir, entre em " +
+    "contato conosco";
+
   @Override
   protected ResponseEntity<Object> handleExceptionInternal(Exception exception,
       Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -38,6 +42,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         .status(status.value())
         .titulo(status.getReasonPhrase())
         .dataHora(LocalDateTime.now())
+        .descricao(MENSAGEM_GENERICA)
         .build();
     }
     else if (body instanceof String) {
@@ -45,6 +50,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         .status(status.value())
         .titulo((String) body)
         .dataHora(LocalDateTime.now())
+        .descricao(MENSAGEM_GENERICA)
         .build();
     }
     return super.handleExceptionInternal(exception, body, headers, status, request);
@@ -102,10 +108,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     var status = HttpStatus.INTERNAL_SERVER_ERROR;
     var tipoErro = TipoErro.ERRO_DE_SISTEMA;
 
-    var mensagem = "Ocorreu um erro interno no sistema. Tente novamente e se o " +
-      "problema persistir, entre em contato conosco";
-
-    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
+    var erro = criarErroBuilder(tipoErro, status, MENSAGEM_GENERICA).build();
 
     exception.printStackTrace();
 
@@ -258,7 +261,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
       .tipo(tipoErro.getUri())
       .titulo(tipoErro.getTitulo())
       .dataHora(LocalDateTime.now())
-      .detalhe(mensagem);
+      .descricao(mensagem);
   }
 
   private String buscarCampoInvalido(List<Reference> references) {
