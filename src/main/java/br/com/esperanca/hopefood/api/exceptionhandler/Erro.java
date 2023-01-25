@@ -27,5 +27,6 @@ public class Erro {
   @JsonProperty("timestamp")
   private LocalDateTime dataHora;
 
+  @JsonProperty("fields")
   private List<Campo> campos;
 }
