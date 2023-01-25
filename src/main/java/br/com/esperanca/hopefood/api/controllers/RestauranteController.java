@@ -1,17 +1,15 @@
 package br.com.esperanca.hopefood.api.controllers;
 
 import br.com.esperanca.hopefood.domain.entities.Restaurante;
-import br.com.esperanca.hopefood.domain.exceptions.EntidadeEmUsoException;
-import br.com.esperanca.hopefood.domain.exceptions.EntidadeNaoEncontradaException;
 import br.com.esperanca.hopefood.domain.exceptions.NegocioException;
 import br.com.esperanca.hopefood.domain.exceptions.cozinhas.CozinhaNaoEncontradaException;
 import br.com.esperanca.hopefood.domain.services.RestauranteService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,21 +34,19 @@ public class RestauranteController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Restaurante adicionar(@RequestBody Restaurante restaurante) {
+  public Restaurante adicionar(@RequestBody @Valid Restaurante restaurante) {
     try {
       return restauranteService.salvar(restaurante);
     }
-    catch (CozinhaNaoEncontradaException cozinhaNaoEncontradaException) {
-      throw new NegocioException(cozinhaNaoEncontradaException.getMessage(),
-        cozinhaNaoEncontradaException
-      );
+    catch (CozinhaNaoEncontradaException exception) {
+      throw new NegocioException(exception.getMessage(),exception);
     }
   }
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
   public Restaurante atualizar(@PathVariable Long id,
-                               @RequestBody Restaurante restaurante) {
+      @RequestBody Restaurante restaurante) {
 
     try {
       Restaurante restauranteAtual = restauranteService.buscarPorId(id);
@@ -59,13 +55,10 @@ public class RestauranteController {
         "id", "formaPagamento", "endereco", "dataCadastro",
         "produto"
       );
-
       return restauranteService.salvar(restauranteAtual);
     }
-    catch (CozinhaNaoEncontradaException cozinhaNaoEncontradaException) {
-      throw new NegocioException(cozinhaNaoEncontradaException.getMessage(),
-        cozinhaNaoEncontradaException
-      );
+    catch (CozinhaNaoEncontradaException exception) {
+      throw new NegocioException(exception.getMessage(), exception);
     }
   }
 
