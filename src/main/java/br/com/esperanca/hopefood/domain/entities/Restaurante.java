@@ -1,5 +1,6 @@
 package br.com.esperanca.hopefood.domain.entities;
 
+import br.com.esperanca.hopefood.api.validations.Grupo;
 import br.com.esperanca.hopefood.domain.embeddables.Endereco;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,6 +14,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
+import javax.validation.groups.ConvertGroup;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ public class Restaurante {
   @NotNull
   @JoinColumn
   @ManyToOne(fetch = FetchType.LAZY)
+  @ConvertGroup(to = Grupo.Cozinha.class)
   @JsonIgnoreProperties("hibernateLazyInitializer")
   private Cozinha cozinha;
 
