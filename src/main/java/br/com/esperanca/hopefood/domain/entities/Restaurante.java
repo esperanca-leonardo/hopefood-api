@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,8 @@ public class Restaurante {
   @PositiveOrZero
   private BigDecimal taxaFrete;
 
+  @Valid
+  @NotNull
   @JoinColumn
   @ManyToOne(fetch = FetchType.LAZY)
   @JsonIgnoreProperties("hibernateLazyInitializer")
