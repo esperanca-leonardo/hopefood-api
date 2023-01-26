@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class CidadeController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Cidade adicionar(@RequestBody Cidade cidade) {
+  public Cidade adicionar(@RequestBody @Valid Cidade cidade) {
     try {
       return cidadeService.salvar(cidade);
     }
@@ -49,7 +50,9 @@ public class CidadeController {
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public Cidade atualizar(@PathVariable Long id, @RequestBody Cidade cidade) {
+  public Cidade atualizar(@RequestBody @Valid Cidade cidade,
+      @PathVariable Long id) {
+
     try {
       Cidade cidadeAtual = cidadeService.buscarPorId(id);
 

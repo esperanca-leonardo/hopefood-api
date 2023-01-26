@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,13 +35,14 @@ public class EstadoController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Estado adicionar(@RequestBody Estado estado) {
+  public Estado adicionar(@RequestBody @Valid Estado estado) {
     return estadoService.salvar(estado);
   }
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public Estado atualizar(@PathVariable Long id, @RequestBody Estado estado) {
+  public Estado atualizar(@RequestBody @Valid Estado estado,
+      @PathVariable Long id) {
     Estado estadoAtual = estadoService.buscarPorId(id);
 
     BeanUtils.copyProperties(estado, estadoAtual,
