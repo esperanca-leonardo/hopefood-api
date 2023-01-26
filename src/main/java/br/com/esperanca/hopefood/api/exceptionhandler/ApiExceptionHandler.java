@@ -130,6 +130,20 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     return handleExceptionInternal(exception, erro, headers, status, request);
   }
 
+  @Override
+  protected ResponseEntity<Object> handleTypeMismatch(
+      TypeMismatchException exception, HttpHeaders headers, HttpStatus status,
+      WebRequest request) {
+
+    if (exception instanceof MethodArgumentTypeMismatchException) {
+      return tratarMethodArgumentTypeMismatch(
+        (MethodArgumentTypeMismatchException) exception, headers, status,
+        request
+      );
+    }
+    return super.handleTypeMismatch(exception, headers, status, request);
+  }
+
   @ExceptionHandler(Exception.class)
   public ResponseEntity<Object> tratarExcecoesNaoCapturadas(Exception exception,
       WebRequest request) {
@@ -144,42 +158,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     return handleExceptionInternal(exception, erro, new HttpHeaders(), status,
       request
     );
-  }
-
-  public ResponseEntity<Object> tratarMethodArgumentTypeMismatch(
-      MethodArgumentTypeMismatchException exception, HttpHeaders headers,
-      HttpStatus status, WebRequest request) {
-
-    var tipoErro = TipoErro.PARAMETRO_INVALIDO;
-
-    var mensagem = "O parâmetro de URL '%s' recebeu o valor '%s', que é de " +
-      "um tipo inválido. Corriga e informe um valor compatível com o tipo %s";
-
-    String parametroUrl = exception.getName();
-    Object valorEnviado = exception.getValue();
-
-    String tipoCorreto = Objects.requireNonNull(
-      exception.getRequiredType()
-    ).getSimpleName();
-
-    mensagem = String.format(mensagem, parametroUrl, valorEnviado, tipoCorreto);
-    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
-
-    return handleExceptionInternal(exception, erro, headers, status, request);
-  }
-
-  @Override
-  protected ResponseEntity<Object> handleTypeMismatch(
-      TypeMismatchException exception, HttpHeaders headers, HttpStatus status,
-      WebRequest request) {
-
-    if (exception instanceof MethodArgumentTypeMismatchException) {
-      return tratarMethodArgumentTypeMismatch(
-        (MethodArgumentTypeMismatchException) exception, headers, status,
-        request
-      );
-    }
-    return super.handleTypeMismatch(exception, headers, status, request);
   }
 
   @ExceptionHandler(InvalidFormatException.class)
@@ -280,6 +258,28 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     return handleExceptionInternal(exception, erro, new HttpHeaders(), status,
       request
     );
+  }
+
+  public ResponseEntity<Object> tratarMethodArgumentTypeMismatch(
+      MethodArgumentTypeMismatchException exception, HttpHeaders headers,
+      HttpStatus status, WebRequest request) {
+
+    var tipoErro = TipoErro.PARAMETRO_INVALIDO;
+
+    var mensagem = "O parâmetro de URL '%s' recebeu o valor '%s', que é de " +
+      "um tipo inválido. Corriga e informe um valor compatível com o tipo %s";
+
+    String parametroUrl = exception.getName();
+    Object valorEnviado = exception.getValue();
+
+    String tipoCorreto = Objects.requireNonNull(
+      exception.getRequiredType()
+    ).getSimpleName();
+
+    mensagem = String.format(mensagem, parametroUrl, valorEnviado, tipoCorreto);
+    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
+
+    return handleExceptionInternal(exception, erro, headers, status, request);
   }
 
   private Erro.ErroBuilder criarErroBuilder(TipoErro tipoErro,
