@@ -6,8 +6,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface RestauranteRepositoryCustom {
+
   List<Restaurante> consultarPorTaxaFrete(BigDecimal taxaInicial,
-                                          BigDecimal taxaFinal);
+    BigDecimal taxaFinal);
 
   List<Restaurante> consultarPorCozinha(Long cozinhaId);
 

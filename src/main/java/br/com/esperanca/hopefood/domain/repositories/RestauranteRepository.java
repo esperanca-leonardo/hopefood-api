@@ -9,8 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RestauranteRepository extends JpaRepositoryCustom<Restaurante, Long>,
-  JpaSpecificationExecutor<Restaurante>, RestauranteRepositoryCustom {
+public interface RestauranteRepository extends
+    JpaRepositoryCustom<Restaurante, Long>,
+    JpaSpecificationExecutor<Restaurante>, RestauranteRepositoryCustom {
 
   List<Restaurante> consultarPorNome(String nome);
 }

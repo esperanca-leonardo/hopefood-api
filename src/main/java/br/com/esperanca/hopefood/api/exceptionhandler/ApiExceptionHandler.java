@@ -55,7 +55,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         .titulo(status.getReasonPhrase())
         .dataHora(LocalDateTime.now())
         .descricao(MENSAGEM_GENERICA)
-        .build();
+      .build();
     }
     else if (body instanceof String) {
       body = Erro.builder()
@@ -63,7 +63,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         .titulo((String) body)
         .dataHora(LocalDateTime.now())
         .descricao(MENSAGEM_GENERICA)
-        .build();
+      .build();
     }
     return super.handleExceptionInternal(exception, body, headers, status,
       request
@@ -92,6 +92,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         (UnrecognizedPropertyException) causaRaiz, headers, status, request
       );
     }
+
     var mensagem = "Corpo da requisição está inválido. " +
       "Verifique erro de sintaxe.";
 
@@ -225,7 +226,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     String campoInvalido = buscarCampoInvalido(exception.getPath());
     mensagem = String.format(mensagem, campoInvalido);
 
-    var erro = criarErroBuilder(PROPRIEDADE_IGNORADA, status, mensagem).build();
+    var erro = criarErroBuilder(PROPRIEDADE_IGNORADA, status, mensagem)
+      .build();
 
     return handleExceptionInternal(exception, erro, headers, status, request);
   }
@@ -252,7 +254,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     var status = HttpStatus.CONFLICT;
     String mensagem = exception.getMessage();
 
-    var erro = criarErroBuilder(RECURSO_EM_USO, status, mensagem).build();
+    var erro = criarErroBuilder(RECURSO_EM_USO, status, mensagem)
+      .build();
 
     return handleExceptionInternal(exception, erro, new HttpHeaders(), status,
       request
@@ -266,7 +269,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     var status = HttpStatus.BAD_REQUEST;
     String mensagem = exception.getMessage();
 
-    var erro = criarErroBuilder(ERRO_NEGOCIO, status, mensagem).build();
+    var erro = criarErroBuilder(ERRO_NEGOCIO, status, mensagem)
+      .build();
 
     return handleExceptionInternal(exception, erro, new HttpHeaders(), status,
       request
@@ -289,7 +293,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     mensagem = String.format(mensagem, parametroUrl, valorEnviado, tipoCorreto);
 
-    var erro = criarErroBuilder(PARAMETRO_INVALIDO, status, mensagem).build();
+    var erro = criarErroBuilder(PARAMETRO_INVALIDO, status, mensagem)
+      .build();
 
     return handleExceptionInternal(exception, erro, headers, status, request);
   }

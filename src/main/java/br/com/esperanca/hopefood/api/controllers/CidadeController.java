@@ -1,19 +1,15 @@
 package br.com.esperanca.hopefood.api.controllers;
 
-import br.com.esperanca.hopefood.api.exceptionhandler.Erro;
 import br.com.esperanca.hopefood.domain.entities.Cidade;
-import br.com.esperanca.hopefood.domain.exceptions.EntidadeNaoEncontradaException;
 import br.com.esperanca.hopefood.domain.exceptions.NegocioException;
 import br.com.esperanca.hopefood.domain.exceptions.estados.EstadoNaoEncontradoException;
 import br.com.esperanca.hopefood.domain.services.CidadeService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -41,10 +37,8 @@ public class CidadeController {
     try {
       return cidadeService.salvar(cidade);
     }
-    catch (EstadoNaoEncontradoException estadoNaoEncontradoException) {
-      throw new NegocioException(estadoNaoEncontradoException.getMessage(),
-        estadoNaoEncontradoException
-      );
+    catch (EstadoNaoEncontradoException exception) {
+      throw new NegocioException(exception.getMessage(), exception);
     }
   }
 
@@ -61,9 +55,8 @@ public class CidadeController {
 
       return cidadeService.salvar(cidadeAtual);
     }
-    catch (EstadoNaoEncontradoException estadoNaoEncontradoException) {
-      throw new NegocioException(estadoNaoEncontradoException.getMessage()
-      );
+    catch (EstadoNaoEncontradoException exception) {
+      throw new NegocioException(exception.getMessage());
     }
   }
 

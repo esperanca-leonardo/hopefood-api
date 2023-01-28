@@ -1,8 +1,6 @@
 package br.com.esperanca.hopefood.domain.services;
 
 import br.com.esperanca.hopefood.domain.entities.Cozinha;
-import br.com.esperanca.hopefood.domain.exceptions.EntidadeEmUsoException;
-import br.com.esperanca.hopefood.domain.exceptions.EntidadeNaoEncontradaException;
 import br.com.esperanca.hopefood.domain.exceptions.cozinhas.CozinhaEmUsoException;
 import br.com.esperanca.hopefood.domain.exceptions.cozinhas.CozinhaNaoEncontradaException;
 import br.com.esperanca.hopefood.domain.repositories.CozinhaRepository;
@@ -12,7 +10,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -25,8 +22,7 @@ public class CozinhaService {
   }
 
   public Cozinha buscarPorId(Long id) {
-    return cozinhaRepository
-      .findById(id)
+    return cozinhaRepository.findById(id)
       .orElseThrow(() -> new CozinhaNaoEncontradaException(id));
   }
 
@@ -38,10 +34,10 @@ public class CozinhaService {
     try {
       cozinhaRepository.deleteById(id);
     }
-    catch (EmptyResultDataAccessException emptyResultDataAccessException) {
+    catch (EmptyResultDataAccessException exception) {
       throw new CozinhaNaoEncontradaException(id);
     }
-    catch (DataIntegrityViolationException dataIntegrityViolationException) {
+    catch (DataIntegrityViolationException exception) {
       throw new CozinhaEmUsoException(id);
     }
   }

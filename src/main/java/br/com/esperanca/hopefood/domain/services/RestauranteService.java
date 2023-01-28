@@ -1,12 +1,8 @@
 package br.com.esperanca.hopefood.domain.services;
 
-import br.com.esperanca.hopefood.domain.entities.Cozinha;
 import br.com.esperanca.hopefood.domain.entities.Restaurante;
-import br.com.esperanca.hopefood.domain.exceptions.EntidadeEmUsoException;
-import br.com.esperanca.hopefood.domain.exceptions.EntidadeNaoEncontradaException;
 import br.com.esperanca.hopefood.domain.exceptions.restaurantes.RestauranteEmUsoException;
 import br.com.esperanca.hopefood.domain.exceptions.restaurantes.RestauranteNaoEncontradoException;
-import br.com.esperanca.hopefood.domain.repositories.CozinhaRepository;
 import br.com.esperanca.hopefood.domain.repositories.RestauranteRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -14,7 +10,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -29,15 +24,14 @@ public class RestauranteService {
   }
 
   public Restaurante buscarPorId(Long id) {
-    return restauranteRepository
-      .findById(id)
+    return restauranteRepository.findById(id)
       .orElseThrow(() -> new RestauranteNaoEncontradoException(id));
   }
 
   public Restaurante salvar(Restaurante restaurante) {
-    Long cozinhaId = restaurante.getCozinha().getId();
 
-    Cozinha cozinha = cozinhaService.buscarPorId(cozinhaId);
+    Long cozinhaId = restaurante.getCozinha().getId();
+    var cozinha = cozinhaService.buscarPorId(cozinhaId);
 
     restaurante.setCozinha(cozinha);
 
@@ -48,10 +42,10 @@ public class RestauranteService {
     try {
       restauranteRepository.deleteById(id);
     }
-    catch (EmptyResultDataAccessException emptyResultDataAccessException) {
+    catch (EmptyResultDataAccessException exception) {
       throw new RestauranteNaoEncontradoException(id);
     }
-    catch (DataIntegrityViolationException dataIntegrityViolationException) {
+    catch (DataIntegrityViolationException exception) {
       throw new RestauranteEmUsoException(id);
     }
   }

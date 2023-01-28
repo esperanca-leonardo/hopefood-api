@@ -1,7 +1,6 @@
 package br.com.esperanca.hopefood.domain.services;
 
 import br.com.esperanca.hopefood.domain.entities.Estado;
-import br.com.esperanca.hopefood.domain.exceptions.cidades.CidadeEmUsoException;
 import br.com.esperanca.hopefood.domain.exceptions.estados.EstadoEmUsoException;
 import br.com.esperanca.hopefood.domain.exceptions.estados.EstadoNaoEncontradoException;
 import br.com.esperanca.hopefood.domain.repositories.EstadoRepository;
@@ -23,8 +22,7 @@ public class EstadoService {
   }
 
   public Estado buscarPorId(Long id) {
-    return estadoRepository
-      .findById(id)
+    return estadoRepository.findById(id)
       .orElseThrow(() -> new EstadoNaoEncontradoException(id));
   }
 
@@ -36,10 +34,10 @@ public class EstadoService {
     try {
       estadoRepository.deleteById(id);
     }
-    catch (EmptyResultDataAccessException emptyResultDataAccessException) {
+    catch (EmptyResultDataAccessException exception) {
       throw new EstadoNaoEncontradoException(id);
     }
-    catch (DataIntegrityViolationException dataIntegrityViolationException) {
+    catch (DataIntegrityViolationException exception) {
       throw new EstadoEmUsoException(id);
     }
   }

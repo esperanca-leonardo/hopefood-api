@@ -7,5 +7,6 @@ import java.util.Optional;
 
 @NoRepositoryBean
 public interface JpaRepositoryCustom<T, ID> extends JpaRepository<T, ID> {
+
   Optional<T> buscarPrimeiraOcorrencia();
 }

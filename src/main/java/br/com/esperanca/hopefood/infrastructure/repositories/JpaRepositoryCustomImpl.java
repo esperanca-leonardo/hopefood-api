@@ -8,14 +8,15 @@ import javax.persistence.EntityManager;
 import java.util.Optional;
 
 public class JpaRepositoryCustomImpl<T, ID> extends SimpleJpaRepository<T, ID>
-  implements JpaRepositoryCustom<T, ID> {
+    implements JpaRepositoryCustom<T, ID> {
 
   private EntityManager entityManager;
 
   public JpaRepositoryCustomImpl(JpaEntityInformation<T, ?> entityInformation,
-                                 EntityManager entityManager) {
+      EntityManager entityManager) {
 
     super(entityInformation, entityManager);
+
     this.entityManager = entityManager;
   }
 

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -33,7 +32,8 @@ public class RestauranteRepositoryImpl implements RestauranteRepositoryCustom {
 
   @Override
   public List<Restaurante> consultarPorTaxaFrete(BigDecimal taxaInicial,
-                                                 BigDecimal taxaFinal) {
+      BigDecimal taxaFinal) {
+
     var parametros = new HashMap<String, BigDecimal>();
     var jpql = new StringBuilder("FROM RestauranteEntity WHERE 1 = 1 ");
 
@@ -45,8 +45,10 @@ public class RestauranteRepositoryImpl implements RestauranteRepositoryCustom {
       jpql.append("AND taxaFrete <= :taxaFinal");
       parametros.put("taxaFinal", taxaFinal);
     }
-    TypedQuery<Restaurante> query = entityManager
-      .createQuery(jpql.toString(), Restaurante.class);
+
+    TypedQuery<Restaurante> query = entityManager.createQuery(
+      jpql.toString(), Restaurante.class
+    );
 
     parametros.forEach(query::setParameter);
 
@@ -55,19 +57,22 @@ public class RestauranteRepositoryImpl implements RestauranteRepositoryCustom {
 
   @Override
   public List<Restaurante> consultarPorCozinha(Long cozinhaId) {
-    CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 
-    CriteriaQuery<Restaurante> criteriaQuery = criteriaBuilder
-      .createQuery(Restaurante.class);
+    var criteriaBuilder = entityManager.getCriteriaBuilder();
+
+    CriteriaQuery<Restaurante> criteriaQuery = criteriaBuilder.createQuery(
+      Restaurante.class
+    );
 
     Root<Restaurante> root = criteriaQuery.from(Restaurante.class);
 
-    Predicate cozinhaPredicate = criteriaBuilder.equal(root.get("cozinhaEntity"), cozinhaId);
+    Predicate cozinhaPredicate = criteriaBuilder.equal(
+      root.get("cozinhaEntity"), cozinhaId
+    );
 
     criteriaQuery.where(cozinhaPredicate);
 
-    return entityManager
-      .createQuery(criteriaQuery)
+    return entityManager.createQuery(criteriaQuery)
       .getResultList();
   }
 

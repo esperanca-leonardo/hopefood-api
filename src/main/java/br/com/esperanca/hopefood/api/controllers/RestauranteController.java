@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -45,15 +44,15 @@ public class RestauranteController {
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public Restaurante atualizar(@PathVariable Long id,
-      @RequestBody @Valid Restaurante restaurante) {
+  public Restaurante atualizar(@RequestBody @Valid Restaurante restaurante,
+      @PathVariable Long id) {
 
     try {
       Restaurante restauranteAtual = restauranteService.buscarPorId(id);
 
       BeanUtils.copyProperties(restaurante, restauranteAtual,
-        "id", "formaPagamento", "endereco", "dataCadastro",
-        "produto"
+        "id", "formaPagamento", "endereco",
+        "dataCadastro", "produto"
       );
       return restauranteService.salvar(restauranteAtual);
     }
