@@ -33,6 +33,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static br.com.esperanca.hopefood.api.exceptionhandler.enuns.TipoErro.*;
+
 @ControllerAdvice
 @AllArgsConstructor
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
@@ -63,7 +65,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         .descricao(MENSAGEM_GENERICA)
         .build();
     }
-    return super.handleExceptionInternal(exception, body, headers, status, request);
+    return super.handleExceptionInternal(exception, body, headers, status,
+      request
+    );
   }
 
   @Override
@@ -91,8 +95,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     var mensagem = "Corpo da requisição está inválido. " +
       "Verifique erro de sintaxe.";
 
-    var tipoErro = TipoErro.PROBLEMA_DE_SINTAXE;
-    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
+    var erro = criarErroBuilder(PROBLEMA_DE_SINTAXE, status, mensagem).build();
 
     return handleExceptionInternal(exception, erro, headers, status, request);
   }
@@ -102,11 +105,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
       NoHandlerFoundException exception, HttpHeaders headers, HttpStatus status,
       WebRequest request) {
 
-    var tipoErro = TipoErro.RECURSO_NAO_ENCONTRADO;
     var mensagem = "O recurso '%s' que você tentou acessar, é inexistente";
 
-    mensagem = String.format(mensagem, exception.getRequestURL());
-    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
+    String recursoAcessado = exception.getRequestURL();
+    mensagem = String.format(mensagem, recursoAcessado);
+
+    var erro = criarErroBuilder(RECURSO_NAO_ENCONTRADO, status, mensagem)
+      .build();
 
     return handleExceptionInternal(exception, erro, headers, status, request);
   }
@@ -115,8 +120,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
   protected ResponseEntity<Object> handleMethodArgumentNotValid(
       MethodArgumentNotValidException exception, HttpHeaders headers,
       HttpStatus status, WebRequest request) {
-
-    var tipoErro = TipoErro.DADOS_INVALIDOS;
 
     var mensagem = "Um ou mais campos estão inválidos. Faça o preenchimento " +
       "correto e tente novamente.";
@@ -135,8 +138,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
       .map(camposInvalidos)
       .collect(Collectors.toList());
 
-    var erro = criarErroBuilder(tipoErro, status, mensagem)
-      .campos(campos)
+    var erro = criarErroBuilder(DADOS_INVALIDOS, status, mensagem)
+        .campos(campos)
       .build();
 
     return handleExceptionInternal(exception, erro, headers, status, request);
@@ -161,9 +164,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
       WebRequest request) {
 
     var status = HttpStatus.INTERNAL_SERVER_ERROR;
-    var tipoErro = TipoErro.ERRO_DE_SISTEMA;
 
-    var erro = criarErroBuilder(tipoErro, status, MENSAGEM_GENERICA).build();
+    var erro = criarErroBuilder(ERRO_DE_SISTEMA, status, MENSAGEM_GENERICA)
+      .build();
 
     exception.printStackTrace();
 
@@ -177,16 +180,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
       InvalidFormatException exception, HttpHeaders headers, HttpStatus status,
       WebRequest request) {
 
-    var tipoErro = TipoErro.TIPO_DE_DADO_INCORRETO;
-    String campoInvalido = buscarCampoInvalido(exception.getPath());
-
     var mensagem = "A propriedade '%s' recebeu o valor '%s', que é do tipo " +
       "inválido. Por favor, corrija para o tipo '%s' e tente novamente";
 
-    mensagem = String.format(mensagem, campoInvalido, exception.getValue(),
-      exception.getTargetType().getSimpleName()
+    String campoInvalido = buscarCampoInvalido(exception.getPath());
+    String valorInformado = exception.getValue().toString();
+    String tipoDadoCorreto = exception.getTargetType().getSimpleName();
+
+    mensagem = String.format(mensagem, campoInvalido, valorInformado,
+      tipoDadoCorreto
     );
-    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
+
+    var erro = criarErroBuilder(TIPO_DE_DADO_INCORRETO, status, mensagem)
+      .build();
 
     return handleExceptionInternal(exception, erro, headers, status, request);
   }
@@ -196,15 +202,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
       UnrecognizedPropertyException exception, HttpHeaders headers,
       HttpStatus status, WebRequest request) {
 
-    var tipoErro = TipoErro.PROPRIEDADE_NAO_ENCONTRADA;
-
-    String campoInvalido = buscarCampoInvalido(exception.getPath());
-
     var mensagem = "A propriedade '%s' não existe. Remova essa propriedade " +
       "e tente novamente";
 
+    String campoInvalido = buscarCampoInvalido(exception.getPath());
     mensagem = String.format(mensagem, campoInvalido);
-    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
+
+    var erro = criarErroBuilder(PROPRIEDADE_NAO_ENCONTRADA, status, mensagem)
+      .build();
 
     return handleExceptionInternal(exception, erro, headers, status, request);
   }
@@ -214,28 +219,26 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
       IgnoredPropertyException exception, HttpHeaders headers,
       HttpStatus status, WebRequest request) {
 
-    var tipoErro = TipoErro.PROPRIEDADE_IGNORADA;
-
-    String campoInvalido = buscarCampoInvalido(exception.getPath());
-
     var mensagem = "A propriedade '%s' não esta mais sendo utilizada. " +
       "Remova essa propriedade e tente novamente.";
 
+    String campoInvalido = buscarCampoInvalido(exception.getPath());
     mensagem = String.format(mensagem, campoInvalido);
-    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
+
+    var erro = criarErroBuilder(PROPRIEDADE_IGNORADA, status, mensagem).build();
 
     return handleExceptionInternal(exception, erro, headers, status, request);
   }
 
   @ExceptionHandler(EntidadeNaoEncontradaException.class)
-  public ResponseEntity<?> tratarEntidadeNaoEncontrada(
+  public ResponseEntity<Object> tratarEntidadeNaoEncontrada(
       EntidadeNaoEncontradaException exception, WebRequest request) {
 
     var status = HttpStatus.NOT_FOUND;
-    var tipoErro = TipoErro.RECURSO_NAO_ENCONTRADO;
-
     String mensagem = exception.getMessage();
-    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
+
+    var erro = criarErroBuilder(RECURSO_NAO_ENCONTRADO, status, mensagem)
+      .build();
 
     return handleExceptionInternal(exception, erro, new HttpHeaders(), status,
       request
@@ -243,14 +246,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler(EntidadeEmUsoException.class)
-  public ResponseEntity<?> tratarEntidadeEmUso(
+  public ResponseEntity<Object> tratarEntidadeEmUso(
       EntidadeEmUsoException exception, WebRequest request) {
 
     var status = HttpStatus.CONFLICT;
-    var tipoErro = TipoErro.RECURSO_EM_USO;
-
     String mensagem = exception.getMessage();
-    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
+
+    var erro = criarErroBuilder(RECURSO_EM_USO, status, mensagem).build();
 
     return handleExceptionInternal(exception, erro, new HttpHeaders(), status,
       request
@@ -258,14 +260,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   @ExceptionHandler(NegocioException.class)
-  public ResponseEntity<?> tratarNegocio(NegocioException exception,
+  public ResponseEntity<Object> tratarNegocio(NegocioException exception,
       WebRequest request) {
 
     var status = HttpStatus.BAD_REQUEST;
-    var tipoErro = TipoErro.ERRO_NEGOCIO;
-
     String mensagem = exception.getMessage();
-    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
+
+    var erro = criarErroBuilder(ERRO_NEGOCIO, status, mensagem).build();
 
     return handleExceptionInternal(exception, erro, new HttpHeaders(), status,
       request
@@ -275,8 +276,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
   public ResponseEntity<Object> tratarMethodArgumentTypeMismatch(
       MethodArgumentTypeMismatchException exception, HttpHeaders headers,
       HttpStatus status, WebRequest request) {
-
-    var tipoErro = TipoErro.PARAMETRO_INVALIDO;
 
     var mensagem = "O parâmetro de URL '%s' recebeu o valor '%s', que é de " +
       "um tipo inválido. Corriga e informe um valor compatível com o tipo %s";
@@ -289,7 +288,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     ).getSimpleName();
 
     mensagem = String.format(mensagem, parametroUrl, valorEnviado, tipoCorreto);
-    var erro = criarErroBuilder(tipoErro, status, mensagem).build();
+
+    var erro = criarErroBuilder(PARAMETRO_INVALIDO, status, mensagem).build();
 
     return handleExceptionInternal(exception, erro, headers, status, request);
   }
