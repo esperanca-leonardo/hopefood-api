@@ -1,4 +1,4 @@
-package br.com.esperanca.hopefood.api.validations;
+package br.com.esperanca.hopefood.core.validations;
 
 public interface Grupo {
 

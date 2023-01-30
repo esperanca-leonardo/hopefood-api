@@ -1,6 +1,6 @@
 package br.com.esperanca.hopefood.domain.entities;
 
-import br.com.esperanca.hopefood.api.validations.Grupo;
+import br.com.esperanca.hopefood.core.validations.Grupo;
 import br.com.esperanca.hopefood.domain.embeddables.Endereco;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
