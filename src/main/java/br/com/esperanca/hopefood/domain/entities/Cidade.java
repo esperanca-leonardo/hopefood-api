@@ -1,6 +1,6 @@
 package br.com.esperanca.hopefood.domain.entities;
 
-import br.com.esperanca.hopefood.core.validations.Grupo;
+import br.com.esperanca.hopefood.core.validators.groups.EstadoValidator;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,7 +28,7 @@ public class Cidade {
   @Valid
   @NotNull
   @ManyToOne
-  @ConvertGroup(to = Grupo.Estado.class)
+  @ConvertGroup(to = EstadoValidator.class)
   private Estado estado;
 
   @CreationTimestamp

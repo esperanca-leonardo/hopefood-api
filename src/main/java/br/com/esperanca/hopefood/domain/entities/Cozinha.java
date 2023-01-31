@@ -1,6 +1,6 @@
 package br.com.esperanca.hopefood.domain.entities;
 
-import br.com.esperanca.hopefood.core.validations.Grupo;
+import br.com.esperanca.hopefood.core.validators.groups.CozinhaValidator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,7 +20,7 @@ import java.util.List;
 public class Cozinha {
 
   @Id
-  @NotNull(groups = Grupo.Cozinha.class)
+  @NotNull(groups = CozinhaValidator.class)
   @EqualsAndHashCode.Include
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

@@ -1,6 +1,6 @@
 package br.com.esperanca.hopefood.domain.entities;
 
-import br.com.esperanca.hopefood.core.validations.Grupo;
+import br.com.esperanca.hopefood.core.validators.groups.CozinhaValidator;
 import br.com.esperanca.hopefood.domain.embeddables.Endereco;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -41,7 +41,7 @@ public class Restaurante {
   @NotNull
   @JoinColumn
   @ManyToOne(fetch = FetchType.LAZY)
-  @ConvertGroup(to = Grupo.Cozinha.class)
+  @ConvertGroup(to = CozinhaValidator.class)
   @JsonIgnoreProperties("hibernateLazyInitializer")
   private Cozinha cozinha;
 

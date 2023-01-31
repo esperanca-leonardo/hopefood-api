@@ -1,6 +1,6 @@
 package br.com.esperanca.hopefood.domain.entities;
 
-import br.com.esperanca.hopefood.core.validations.Grupo;
+import br.com.esperanca.hopefood.core.validators.groups.EstadoValidator;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Estado {
   @Id
-  @NotNull(groups = Grupo.Estado.class)
+  @NotNull(groups = EstadoValidator.class)
   @EqualsAndHashCode.Include
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
