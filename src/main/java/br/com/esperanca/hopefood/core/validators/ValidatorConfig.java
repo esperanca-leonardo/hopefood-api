@@ -1,4 +1,4 @@
-package br.com.esperanca.hopefood.core.validations;
+package br.com.esperanca.hopefood.core.validators;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 @Configuration
-public class ValitaionsConfig {
+public class ValidatorConfig {
 
   @Bean
   public LocalValidatorFactoryBean localValidatorFactoryBean(
