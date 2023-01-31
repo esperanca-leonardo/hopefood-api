@@ -1,5 +1,6 @@
 package br.com.esperanca.hopefood.domain.entities;
 
+import br.com.esperanca.hopefood.core.annotations.TaxaFrete;
 import br.com.esperanca.hopefood.core.validators.groups.CozinhaValidator;
 import br.com.esperanca.hopefood.domain.embeddables.Endereco;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -13,7 +14,6 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
 import javax.validation.groups.ConvertGroup;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,8 +33,7 @@ public class Restaurante {
   @NotBlank
   private String nome;
 
-  @NotNull
-  @PositiveOrZero
+  @TaxaFrete
   private BigDecimal taxaFrete;
 
   @Valid
