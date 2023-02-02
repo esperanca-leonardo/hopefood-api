@@ -16,6 +16,7 @@ import java.util.List;
 
 @Data
 @Entity
+@NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Cozinha {
 
@@ -37,4 +38,8 @@ public class Cozinha {
 
   @UpdateTimestamp
   private LocalDateTime dataAtualizacao;
+
+  public Cozinha(String nome) {
+    this.nome = nome;
+  }
 }
