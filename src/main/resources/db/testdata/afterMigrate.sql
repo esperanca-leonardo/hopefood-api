@@ -38,6 +38,7 @@ insert into cozinha (nome, data_atualizacao, data_cadastro) values ('Tailandesa'
 insert into cozinha (nome, data_atualizacao, data_cadastro) values ('Indiana', current_timestamp, current_timestamp);
 insert into cozinha (nome, data_atualizacao, data_cadastro) values ('Argentina', current_timestamp, current_timestamp);
 insert into cozinha (nome, data_atualizacao, data_cadastro) values ('Brasileira', current_timestamp, current_timestamp);
+insert into cozinha (nome, data_atualizacao, data_cadastro) values ('Japonesa', current_timestamp, current_timestamp);
 
 insert into estado (nome, data_atualizacao, data_cadastro) values ('Goiás', current_timestamp, current_timestamp);
 insert into estado (nome, data_atualizacao, data_cadastro) values ('São Paulo', current_timestamp, current_timestamp);
