@@ -1,0 +1,2 @@
+INSERT INTO kitchen (name, description) VALUES ("Italiana", "Massas, pizzas e molhos saborosos. Ingredientes frescos como azeite de oliva, tomates, queijos e ervas aromáticas. Tradição e autenticidade em cada prato.");
+INSERT INTO kitchen (name, description) VALUES ("Mexicana", "Sabores picantes e vibrantes. Pimentas, feijões, milho, abacate, tomates e especiarias. Tacos, burritos, guacamole e enchiladas. Riqueza cultural em cada mordida.");
