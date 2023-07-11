@@ -11,8 +11,8 @@ import javax.persistence.*;
 public class Kitchen {
 
   @Id
-  @EqualsAndHashCode.Include
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @EqualsAndHashCode.Include
   private Long id;
 
   @Column(nullable = false)

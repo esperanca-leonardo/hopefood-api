@@ -12,8 +12,8 @@ import java.math.BigDecimal;
 public class Restaurant {
 
   @Id
-  @EqualsAndHashCode.Include
   @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @EqualsAndHashCode.Include
   private Long id;
 
   @Column(nullable = false)
