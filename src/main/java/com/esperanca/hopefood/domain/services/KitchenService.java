@@ -10,6 +10,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service class for Kitchen-related operations.
+ *
+ * This class provides the business logic for handling Kitchen entities.
+ * It delegates the data access operations to the underlying kitchenRepository
+ * and handles any exceptions that may occur.
+ */
 @Service
 public class KitchenService {
 
@@ -19,18 +26,65 @@ public class KitchenService {
 		this.kitchenRepository = kitchenRepository;
 	}
 
+	/**
+	 * Retrieve all Kitchens.
+	 *
+	 * This method retrieves all Kitchens from the system.
+	 * It delegates the retrieval operation to the underlying kitchenRepository,
+	 * which is responsible for fetching all the Kitchen objects.
+	 * It returns a List containing all the retrieved Kitchen objects.
+	 *
+	 * @return a List of all Kitchen objects
+	 */
 	public List<Kitchen> findAll() {
 		return this.kitchenRepository.findAll();
 	}
 
+	/**
+	 * Find a Kitchen by ID.
+	 *
+	 * This method retrieves a Kitchen from the system based on the provided ID.
+	 * It delegates the retrieval operation to the underlying kitchenRepository,
+	 * which is responsible for fetching the Kitchen object with the
+	 * corresponding ID.
+	 * If a Kitchen with the provided ID is found, it returns the corresponding
+	 * Kitchen object.
+	 * If no Kitchen is found with the provided ID, it returns null.
+	 *
+	 * @param id the ID of the Kitchen to retrieve
+	 * @return the Kitchen object found by ID, or null if not found
+	 */
 	public Kitchen findById(Long id) {
 		return this.kitchenRepository.findById(id);
 	}
 
+	/**
+	 * Saves a Kitchen.
+	 *
+	 * This method handles the saving of a Kitchen in the system.
+	 * It delegates the saving operation to the underlying kitchenRepository,
+	 * which is responsible for persisting the Kitchen object.
+	 * If the saving is successful, it returns the saved Kitchen object.
+	 *
+	 * @param kitchen the Kitchen object to be saved
+	 * @return the saved Kitchen object
+	 */
 	public Kitchen save(Kitchen kitchen) {
 		return this.kitchenRepository.save(kitchen);
 	}
 
+	/**
+	 * Deletes a Kitchen by ID.
+	 *
+	 * This method handles the deletion of a Kitchen from the system based on the
+	 * provided ID.
+	 *
+	 * @param id the ID of the Kitchen to be deleted
+	 * @throws EntityInUseException if the Kitchen is currently in use and cannot
+	 * be deleted
+	 * @throws EntityNotFoundException if the Kitchen with the provided ID is not
+	 * found
+	 */
 	public void delete(Long id) throws EntityInUseException,
 			EntityNotFoundException {
 
