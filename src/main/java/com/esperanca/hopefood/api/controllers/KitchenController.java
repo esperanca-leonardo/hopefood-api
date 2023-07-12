@@ -61,13 +61,13 @@ public class KitchenController {
 	 */
 	@GetMapping("/{id}")
 	public ResponseEntity<Kitchen> findById(@PathVariable Long id) {
-		var kitchen = this.kitchenService.findById(id);
+		final var KITCHEN = this.kitchenService.findById(id);
 		var httpStatus = OK;
 
-		if (Objects.isNull(kitchen)) {
+		if (Objects.isNull(KITCHEN)) {
 			httpStatus = NOT_FOUND;
 		}
-		return ResponseEntity.status(httpStatus).body(kitchen);
+		return ResponseEntity.status(httpStatus).body(KITCHEN);
 	}
 
 	/**

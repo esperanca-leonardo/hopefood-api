@@ -88,11 +88,11 @@ public class KitchenRepositoryImpl implements KitchenRepository {
   @Override
   @Transactional
   public void delete(Long id) {
-    var kitchen = this.findById(id);
+    final var KITCHEN = this.findById(id);
 
-    if (Objects.isNull(kitchen)) {
+    if (Objects.isNull(KITCHEN)) {
      throw new EmptyResultDataAccessException(1);
     }
-    this.entityManager.remove(kitchen);
+    this.entityManager.remove(KITCHEN);
   }
 }
