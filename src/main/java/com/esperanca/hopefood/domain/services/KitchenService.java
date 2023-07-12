@@ -10,6 +10,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service class for Kitchen-related operations.
@@ -52,7 +53,7 @@ public class KitchenService {
 	 * @param id the ID of the Kitchen to retrieve
 	 * @return the Kitchen object found by ID, or null if not found
 	 */
-	public Kitchen findById(Long id) {
+	public Optional<Kitchen> findById(Long id) {
 		return this.kitchenRepository.findById(id);
 	}
 
@@ -87,7 +88,7 @@ public class KitchenService {
 			EntityNotFoundException {
 
 		try {
-			this.kitchenRepository.delete(id);
+			this.kitchenRepository.deleteById(id);
 		}
 		catch (EmptyResultDataAccessException exception) {
 			throw new EntityNotFoundException(
