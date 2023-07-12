@@ -1,16 +1,10 @@
 package com.esperanca.hopefood.domain.repositories;
 
 import com.esperanca.hopefood.domain.models.Permission;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+@Repository
+public interface PermissionRepository extends JpaRepository<Permission, Long> {
 
-public interface PermissionRepository {
-
-  List<Permission> findAll();
-
-  Permission findById(Long id);
-
-  Permission save(Permission permission);
-
-  void delete(Long id);
 }

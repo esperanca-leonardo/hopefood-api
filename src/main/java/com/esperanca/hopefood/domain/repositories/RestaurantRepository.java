@@ -1,16 +1,10 @@
 package com.esperanca.hopefood.domain.repositories;
 
 import com.esperanca.hopefood.domain.models.Restaurant;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+@Repository
+public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 
-public interface RestaurantRepository {
-
-  List<Restaurant> findAll();
-
-  Restaurant findById(Long id);
-
-  Restaurant save(Restaurant restaurant);
-
-  void delete(Long id);
 }

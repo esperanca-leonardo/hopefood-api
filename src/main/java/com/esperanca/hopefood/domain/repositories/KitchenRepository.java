@@ -1,16 +1,10 @@
 package com.esperanca.hopefood.domain.repositories;
 
 import com.esperanca.hopefood.domain.models.Kitchen;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+@Repository
+public interface KitchenRepository extends JpaRepository<Kitchen, Long> {
 
-public interface KitchenRepository {
-
-  List<Kitchen> findAll();
-
-  Kitchen findById(Long id);
-
-  Kitchen save(Kitchen kitchen);
-
-  void delete(Long id);
 }
