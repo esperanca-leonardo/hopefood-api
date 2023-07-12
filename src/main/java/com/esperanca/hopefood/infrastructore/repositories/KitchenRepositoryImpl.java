@@ -2,12 +2,15 @@ package com.esperanca.hopefood.infrastructore.repositories;
 
 import com.esperanca.hopefood.domain.models.Kitchen;
 import com.esperanca.hopefood.domain.repositories.KitchenRepository;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class KitchenRepositoryImpl implements KitchenRepository {
@@ -36,6 +39,10 @@ public class KitchenRepositoryImpl implements KitchenRepository {
   @Transactional
   public void remove(Long id) {
     var kitchen = this.findById(id);
+
+    if (Objects.isNull(kitchen)) {
+     throw new EmptyResultDataAccessException(1);
+    }
     this.entityManager.remove(kitchen);
   }
 }
