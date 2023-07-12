@@ -35,7 +35,7 @@ public class PermissionRepositoryImpl implements PermissionRepository {
 
   @Override
   @Transactional
-  public void remove(Long id) {
+  public void delete(Long id) {
     var permission = this.findById(id);
     this.entityManager.remove(permission);
   }

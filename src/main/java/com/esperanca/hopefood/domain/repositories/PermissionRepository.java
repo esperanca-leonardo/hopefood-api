@@ -12,5 +12,5 @@ public interface PermissionRepository {
 
   Permission save(Permission permission);
 
-  void remove(Long id);
+  void delete(Long id);
 }

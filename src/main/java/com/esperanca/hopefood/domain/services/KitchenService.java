@@ -87,7 +87,7 @@ public class KitchenService {
 			EntityNotFoundException {
 
 		try {
-			this.kitchenRepository.remove(id);
+			this.kitchenRepository.delete(id);
 		}
 		catch (EmptyResultDataAccessException exception) {
 			throw new EntityNotFoundException(

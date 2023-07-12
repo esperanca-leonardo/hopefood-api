@@ -35,7 +35,7 @@ public class FormOfPaymentRepositoryImpl implements FormOfPaymentRepository {
 
   @Override
   @Transactional
-  public void remove(Long id) {
+  public void delete(Long id) {
     var formOfPayment = this.findById(id);
     this.entityManager.remove(formOfPayment);
   }

@@ -12,5 +12,5 @@ public interface FormOfPaymentRepository {
 
   FormOfPayment save(FormOfPayment formOfPayment);
 
-  void remove(Long id);
+  void delete(Long id);
 }

@@ -34,7 +34,7 @@ public class StateRepositoryImpl implements StateRepository {
 
   @Override
   @Transactional
-  public void remove(Long id) {
+  public void delete(Long id) {
     var state = this.findById(id);
     this.entityManager.remove(state);
   }

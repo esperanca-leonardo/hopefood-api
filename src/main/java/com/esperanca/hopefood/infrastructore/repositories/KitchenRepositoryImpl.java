@@ -87,7 +87,7 @@ public class KitchenRepositoryImpl implements KitchenRepository {
    */
   @Override
   @Transactional
-  public void remove(Long id) {
+  public void delete(Long id) {
     var kitchen = this.findById(id);
 
     if (Objects.isNull(kitchen)) {
