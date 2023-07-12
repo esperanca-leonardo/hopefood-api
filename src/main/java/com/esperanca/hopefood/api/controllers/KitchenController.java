@@ -4,6 +4,7 @@ import com.esperanca.hopefood.domain.exceptions.EntityInUseException;
 import com.esperanca.hopefood.domain.exceptions.EntityNotFoundException;
 import com.esperanca.hopefood.domain.models.Kitchen;
 import com.esperanca.hopefood.domain.services.KitchenService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +25,10 @@ import static org.springframework.http.HttpStatus.*;
  */
 @RestController
 @RequestMapping("/kitchens")
+@AllArgsConstructor
 public class KitchenController {
 
 	private KitchenService kitchenService;
-
-	public KitchenController(KitchenService kitchenService) {
-		this.kitchenService = kitchenService;
-	}
 
 	/**
 	 * Retrieves all Kitchens.

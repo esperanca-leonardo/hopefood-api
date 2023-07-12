@@ -4,6 +4,7 @@ import com.esperanca.hopefood.domain.exceptions.EntityInUseException;
 import com.esperanca.hopefood.domain.exceptions.EntityNotFoundException;
 import com.esperanca.hopefood.domain.models.Kitchen;
 import com.esperanca.hopefood.domain.repositories.KitchenRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,10 @@ import java.util.List;
  * and handles any exceptions that may occur.
  */
 @Service
+@AllArgsConstructor
 public class KitchenService {
 
 	private KitchenRepository kitchenRepository;
-
-	public KitchenService(KitchenRepository kitchenRepository) {
-		this.kitchenRepository = kitchenRepository;
-	}
 
 	/**
 	 * Retrieve all Kitchens.
