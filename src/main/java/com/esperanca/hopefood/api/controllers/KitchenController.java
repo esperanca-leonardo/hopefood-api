@@ -1,9 +1,10 @@
 package com.esperanca.hopefood.api.controllers;
 
+import com.esperanca.hopefood.domain.exceptions.EntityInUseException;
+import com.esperanca.hopefood.domain.exceptions.EntityNotFoundException;
 import com.esperanca.hopefood.domain.models.Kitchen;
 import com.esperanca.hopefood.domain.services.KitchenService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,14 +29,14 @@ public class KitchenController {
 	}
 
 	@GetMapping("/{id}")
-	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Kitchen> findById(@PathVariable Long id) {
 		var kitchen = this.kitchenService.findById(id);
+		var httpStatus = HttpStatus.OK;
 
-		if (Objects.nonNull(kitchen)) {
-			return ResponseEntity.ok(kitchen);
+		if (Objects.isNull(kitchen)) {
+			httpStatus = HttpStatus.NOT_FOUND;
 		}
-		return ResponseEntity.notFound().build();
+		return ResponseEntity.status(httpStatus).body(kitchen);
 	}
 
 	@PostMapping
@@ -47,34 +48,36 @@ public class KitchenController {
 	@PutMapping("/{id}")
 	public ResponseEntity<Kitchen> update(@RequestBody Kitchen kitchen,
 			@PathVariable Long id) {
+
 		var kitchenFromDb = this.kitchenService.findById(id);
+		var httpStatus = HttpStatus.OK;
 
 		if (Objects.nonNull(kitchenFromDb)) {
 			BeanUtils.copyProperties(kitchen, kitchenFromDb, "id");
 			this.kitchenService.save(kitchenFromDb);
-
-			return ResponseEntity.ok(kitchenFromDb);
 		}
-		return ResponseEntity.notFound().build();
+		else {
+			httpStatus = HttpStatus.NOT_FOUND;
+		}
+		return ResponseEntity.status(httpStatus).body(kitchenFromDb);
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Kitchen> delete(@PathVariable Long id) {
-		var kitchen = this.kitchenService.findById(id);
+	public ResponseEntity<?> delete(@PathVariable Long id) {
 		var httpStatus = HttpStatus.NO_CONTENT;
+		var message = "";
 
 		try {
-			if (Objects.nonNull(kitchen)) {
-				this.kitchenService.delete(id);
-			}
-			else {
-				httpStatus = HttpStatus.NOT_FOUND;
-			}
+			this.kitchenService.delete(id);
 		}
-		catch (DataIntegrityViolationException exception) {
-			exception.printStackTrace();
+		catch (EntityNotFoundException exception) {
+			message = exception.getMessage();
+			httpStatus = HttpStatus.NOT_FOUND;
+		}
+		catch (EntityInUseException exception) {
+			message = exception.getMessage();
 			httpStatus = HttpStatus.CONFLICT;
 		}
-		return ResponseEntity.status(httpStatus).build();
+		return ResponseEntity.status(httpStatus).body(message);
 	}
 }
