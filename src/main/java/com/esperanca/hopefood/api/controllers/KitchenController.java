@@ -5,12 +5,13 @@ import com.esperanca.hopefood.domain.exceptions.EntityNotFoundException;
 import com.esperanca.hopefood.domain.models.Kitchen;
 import com.esperanca.hopefood.domain.services.KitchenService;
 import org.springframework.beans.BeanUtils;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
+
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * Controller class for handling Kitchen-related HTTP requests.
@@ -40,7 +41,7 @@ public class KitchenController {
 	 * @return a List of all Kitchen objects
 	 */
 	@GetMapping
-	@ResponseStatus(HttpStatus.OK)
+	@ResponseStatus(OK)
 	public List<Kitchen> findAll() {
 		return this.kitchenService.findAll();
 	}
@@ -63,10 +64,10 @@ public class KitchenController {
 	@GetMapping("/{id}")
 	public ResponseEntity<Kitchen> findById(@PathVariable Long id) {
 		var kitchen = this.kitchenService.findById(id);
-		var httpStatus = HttpStatus.OK;
+		var httpStatus = OK;
 
 		if (Objects.isNull(kitchen)) {
-			httpStatus = HttpStatus.NOT_FOUND;
+			httpStatus = NOT_FOUND;
 		}
 		return ResponseEntity.status(httpStatus).body(kitchen);
 	}
@@ -82,7 +83,7 @@ public class KitchenController {
 	 * @return the saved Kitchen object
 	 */
 	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseStatus(CREATED)
 	public Kitchen save(@RequestBody Kitchen kitchen) {
 		return this.kitchenService.save(kitchen);
 	}
@@ -107,14 +108,14 @@ public class KitchenController {
 			@PathVariable Long id) {
 
 		var kitchenFromDb = this.kitchenService.findById(id);
-		var httpStatus = HttpStatus.OK;
+		var httpStatus = OK;
 
 		if (Objects.nonNull(kitchenFromDb)) {
 			BeanUtils.copyProperties(kitchen, kitchenFromDb, "id");
 			this.kitchenService.save(kitchenFromDb);
 		}
 		else {
-			httpStatus = HttpStatus.NOT_FOUND;
+			httpStatus = NOT_FOUND;
 		}
 		return ResponseEntity.status(httpStatus).body(kitchenFromDb);
 	}
@@ -138,7 +139,7 @@ public class KitchenController {
 	 */
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
-		var httpStatus = HttpStatus.NO_CONTENT;
+		var httpStatus = NO_CONTENT;
 		var message = "";
 
 		try {
@@ -146,11 +147,11 @@ public class KitchenController {
 		}
 		catch (EntityNotFoundException exception) {
 			message = exception.getMessage();
-			httpStatus = HttpStatus.NOT_FOUND;
+			httpStatus = NOT_FOUND;
 		}
 		catch (EntityInUseException exception) {
 			message = exception.getMessage();
-			httpStatus = HttpStatus.CONFLICT;
+			httpStatus = CONFLICT;
 		}
 		return ResponseEntity.status(httpStatus).body(message);
 	}
