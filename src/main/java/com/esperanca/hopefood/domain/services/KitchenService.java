@@ -62,7 +62,7 @@ public class KitchenService {
 	public Kitchen findById(Long id) throws EntityNotFoundException {
 		return this.kitchenRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException(
-						String.format(this.KITCHEN_NOT_FOUND, id)
+						String.format(KITCHEN_NOT_FOUND, id)
 				));
 	}
 
