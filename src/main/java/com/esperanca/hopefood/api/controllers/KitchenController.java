@@ -121,20 +121,20 @@ public class KitchenController {
 			@PathVariable Long id) {
 
 		HttpStatus httpStatus = OK;
-		Kitchen kitchenSaved = null;
+		Kitchen kitchenUpdated = null;
 
 		try {
-			final var KITCHEN_FROM_DB = this.kitchenService.findById(id);
+			var kitchenFromDb = this.kitchenService.findById(id);
 
-			BeanUtils.copyProperties(kitchen, KITCHEN_FROM_DB,
+			BeanUtils.copyProperties(kitchen, kitchenFromDb,
 					"id"
 			);
-			kitchenSaved = this.kitchenService.save(KITCHEN_FROM_DB);
+			kitchenUpdated = this.kitchenService.save(kitchenFromDb);
 		}
 		catch (EntityNotFoundException exception) {
 			httpStatus = NOT_FOUND;
 		}
-		return ResponseEntity.status(httpStatus).body(kitchenSaved);
+		return ResponseEntity.status(httpStatus).body(kitchenUpdated);
 	}
 
 	/**
