@@ -6,11 +6,11 @@ import com.esperanca.hopefood.domain.models.Kitchen;
 import com.esperanca.hopefood.domain.services.KitchenService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -45,15 +45,18 @@ public class KitchenController {
 	}
 
 	/**
-	 * Retrieves a Kitchen by ID.
+	 * Find a Kitchen by ID.
 	 *
 	 * This method retrieves a Kitchen from the system based on the provided ID.
-	 * If the Kitchen with the provided ID is found, it returns a ResponseEntity
-	 * with HTTP status 200 (OK)
-	 * and the retrieved Kitchen object in the response body.
-	 * If the Kitchen with the provided ID is not found, it returns a
-	 * ResponseEntity with HTTP status 404 (NOT_FOUND) and an empty response
-	 * body.
+	 * It delegates the retrieval operation to the kitchenService's findById
+	 * method.
+	 * If a Kitchen with the provided ID is found, it sets the HTTP status to
+	 * 200 (OK)
+	 * and assigns the retrieved Kitchen object to KITCHEN_FROM_DB.
+	 * If no Kitchen is found with the provided ID, it sets the HTTP status to
+	 * 404 (NOT_FOUND).
+	 * It returns a ResponseEntity object containing the HTTP status and the
+	 * KITCHEN_FROM_DB object in the response body.
 	 *
 	 * @param id the ID of the Kitchen to retrieve
 	 * @return a ResponseEntity representing the HTTP response, with status and
@@ -61,13 +64,16 @@ public class KitchenController {
 	 */
 	@GetMapping("/{id}")
 	public ResponseEntity<Kitchen> findById(@PathVariable Long id) {
-		final var KITCHEN = this.kitchenService.findById(id);
-		var httpStatus = OK;
+		HttpStatus httpStatus = OK;
+		Kitchen KITCHEN_FROM_DB = null;
 
-		if (Objects.isNull(KITCHEN)) {
+		try {
+			KITCHEN_FROM_DB = this.kitchenService.findById(id);
+		}
+		catch (EntityNotFoundException exception) {
 			httpStatus = NOT_FOUND;
 		}
-		return ResponseEntity.status(httpStatus).body(KITCHEN);
+		return ResponseEntity.status(httpStatus).body(KITCHEN_FROM_DB);
 	}
 
 	/**
@@ -87,57 +93,74 @@ public class KitchenController {
 	}
 
 	/**
-	 * Updates a Kitchen by ID.
+	 * Update a Kitchen by ID.
 	 *
-	 * This method handles the update of a Kitchen in the system based on the
-	 * provided ID.
-	 * If the Kitchen with the provided ID is found and successfully updated,
-	 * it returns a ResponseEntity with HTTP status 200 (OK)
-	 * and the updated Kitchen object in the response body.
-	 * If the Kitchen with the provided ID is not found, it returns a
-	 * ResponseEntity with HTTP status 404 (NOT_FOUND) and an empty response body.
+	 * This method updates a Kitchen in the system based on the provided ID.
+	 * It retrieves the existing Kitchen from the kitchenService using the
+	 * findById method.
+	 * If a Kitchen with the provided ID is found, it copies the properties from
+	 * the given
+	 * Kitchen object to the existing Kitchen object retrieved from the database,
+	 * excluding the ID.
+	 * It saves the updated Kitchen object using the kitchenService's save
+	 * method and assigns
+	 * the saved Kitchen object to kitchenSaved.
+	 * If no Kitchen is found with the provided ID, it sets the HTTP status to
+	 * 404 (NOT_FOUND).
+	 * It returns a ResponseEntity object containing the HTTP status and the
+	 * kitchenSaved object
+	 * in the response body.
 	 *
 	 * @param kitchen the Kitchen object containing the updated information
 	 * @param id the ID of the Kitchen to be updated
-	 * @return a ResponseEntity representing the HTTP response, with status and body
+	 * @return a ResponseEntity representing the HTTP response, with status
+	 * and body
 	 */
 	@PutMapping("/{id}")
 	public ResponseEntity<Kitchen> update(@RequestBody Kitchen kitchen,
 			@PathVariable Long id) {
 
-		var kitchenFromDb = this.kitchenService.findById(id);
-		var httpStatus = OK;
+		HttpStatus httpStatus = OK;
+		Kitchen kitchenSaved = null;
 
-		if (Objects.nonNull(kitchenFromDb)) {
-			BeanUtils.copyProperties(kitchen, kitchenFromDb, "id");
-			this.kitchenService.save(kitchenFromDb);
+		try {
+			final var KITCHEN_FROM_DB = this.kitchenService.findById(id);
+			BeanUtils.copyProperties(kitchen, KITCHEN_FROM_DB, "id");
+			kitchenSaved = this.kitchenService.save(KITCHEN_FROM_DB);
 		}
-		else {
+		catch (EntityNotFoundException exception) {
 			httpStatus = NOT_FOUND;
 		}
-		return ResponseEntity.status(httpStatus).body(kitchenFromDb);
+		return ResponseEntity.status(httpStatus).body(kitchenSaved);
 	}
 
 	/**
-	 * Deletes a Kitchen by ID.
+	 * Delete a Kitchen by ID.
 	 *
 	 * This method handles the deletion of a Kitchen from the system based on
 	 * the provided ID.
-	 * If the deletion is successful, it returns a ResponseEntity with HTTP status
-	 * 204 (NO_CONTENT).
-	 * If the Kitchen is not found, it returns a ResponseEntity with HTTP status
-	 * 404 (NOT_FOUND) and an error message.
-	 * If the deletion fails due to the Kitchen being currently in use, it
-	 * returns a ResponseEntity with HTTP status 409 (CONFLICT)
-	 * and an error message indicating the reason for the conflict.
+	 * It delegates the deletion operation to the kitchenService's delete method.
+	 * If the Kitchen is successfully deleted, it sets the HTTP status to 204
+	 * (NO_CONTENT)
+	 * and returns an empty response body.
+	 * If no Kitchen is found with the provided ID, it sets the HTTP status to
+	 * 404 (NOT_FOUND)
+	 * and assigns the error message from the EntityNotFoundException to the
+	 * 'message' variable.
+	 * If the Kitchen is currently in use and cannot be deleted, it sets the
+	 * HTTP status to 409 (CONFLICT)
+	 * and assigns the error message from the EntityInUseException to the
+	 * 'message' variable.
+	 * It returns a ResponseEntity object containing the HTTP status and the
+	 * 'message' in the response body.
 	 *
 	 * @param id the ID of the Kitchen to be deleted
-	 * @return a ResponseEntity representing the HTTP response, with the
-	 * appropriate status and error message if applicable
+	 * @return a ResponseEntity representing the HTTP response, with status
+	 * and body
 	 */
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> delete(@PathVariable Long id) {
-		var httpStatus = NO_CONTENT;
+	public ResponseEntity<String> delete(@PathVariable Long id) {
+		HttpStatus httpStatus = NO_CONTENT;
 		var message = "";
 
 		try {
