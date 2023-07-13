@@ -65,15 +65,15 @@ public class KitchenController {
 	@GetMapping("/{id}")
 	public ResponseEntity<Kitchen> findById(@PathVariable Long id) {
 		HttpStatus httpStatus = OK;
-		Kitchen KITCHEN_FROM_DB = null;
+		Kitchen kitchen = null;
 
 		try {
-			KITCHEN_FROM_DB = this.kitchenService.findById(id);
+			kitchen = this.kitchenService.findById(id);
 		}
 		catch (EntityNotFoundException exception) {
 			httpStatus = NOT_FOUND;
 		}
-		return ResponseEntity.status(httpStatus).body(KITCHEN_FROM_DB);
+		return ResponseEntity.status(httpStatus).body(kitchen);
 	}
 
 	/**
@@ -125,7 +125,10 @@ public class KitchenController {
 
 		try {
 			final var KITCHEN_FROM_DB = this.kitchenService.findById(id);
-			BeanUtils.copyProperties(kitchen, KITCHEN_FROM_DB, "id");
+
+			BeanUtils.copyProperties(kitchen, KITCHEN_FROM_DB,
+					"id"
+			);
 			kitchenSaved = this.kitchenService.save(KITCHEN_FROM_DB);
 		}
 		catch (EntityNotFoundException exception) {
