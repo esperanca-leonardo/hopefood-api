@@ -25,6 +25,8 @@ public class KitchenService {
 	private static final String KITCHEN_NOT_FOUND =
 			"Kitchen not found with ID %d";
 
+	private static final String KITCHEN_IN_USE = "Kitchen in use with ID %d";
+
 	private KitchenRepository kitchenRepository;
 
 	/**
@@ -115,7 +117,7 @@ public class KitchenService {
 		}
 		catch (DataIntegrityViolationException exception) {
 			throw new EntityInUseException(
-					String.format("Kitchen in use with ID %d", id)
+					String.format(KITCHEN_IN_USE, id)
 			);
 		}
 	}
