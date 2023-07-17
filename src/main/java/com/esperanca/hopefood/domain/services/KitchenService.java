@@ -1,10 +1,11 @@
 package com.esperanca.hopefood.domain.services;
 
-import com.esperanca.hopefood.domain.exceptions.EntityInUseException;
-import com.esperanca.hopefood.domain.exceptions.EntityNotFoundException;
+import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenInUseException;
+import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenNotFoundException;
 import com.esperanca.hopefood.domain.models.Kitchen;
 import com.esperanca.hopefood.domain.repositories.KitchenRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -12,113 +13,140 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Service class for Kitchen-related operations.
- *
- * This class provides the business logic for handling Kitchen entities.
- * It delegates the data access operations to the underlying kitchenRepository
- * and handles any exceptions that may occur.
+ * A service class for managing kitchens.
+ * This class provides methods for finding, saving, updating, and deleting
+ * kitchens.
  */
 @Service
 @AllArgsConstructor
 public class KitchenService {
 
-	private static final String KITCHEN_NOT_FOUND =
-			"Kitchen not found with ID %d";
-
-	private static final String KITCHEN_IN_USE = "Kitchen in use with ID %d";
-
+	/**
+	 * The repository for kitchens.
+	 */
 	private KitchenRepository kitchenRepository;
 
 	/**
-	 * Retrieve all Kitchens.
+	 * Finds all kitchens.
+	 * This method finds all kitchens in the database.
+	 * The method first calls the `findAll()` method of the `kitchenRepository`
+	 * to find all kitchens.
+	 * Then, the method returns the list of kitchens.
 	 *
-	 * This method retrieves all Kitchens from the system.
-	 * It delegates the retrieval operation to the underlying kitchenRepository,
-	 * which is responsible for fetching all the Kitchen objects.
-	 * It returns a List containing all the retrieved Kitchen objects.
+	 * @return the list of kitchens
 	 *
-	 * @return a List of all Kitchen objects
+	 * @see KitchenRepository#findAll
 	 */
 	public List<Kitchen> findAll() {
 		return this.kitchenRepository.findAll();
 	}
 
 	/**
-	 * Find a Kitchen by ID.
+	 *  Finds a kitchen by its ID.
+	 *  This method finds the kitchen with the specified ID in the database.
+	 *  The id parameter is the ID of the kitchen to be found.
+	 *  The method first calls the findById() method of the kitchenRepository
+	 *  to find the kitchen with the specified ID.
+	 *  If the kitchen is found, the method returns the kitchen.
+	 *  If the kitchen is not found, the method throws a KitchenNotFoundException
+	 *  exception.
 	 *
-	 * This method retrieves a Kitchen from the system based on the provided ID.
-	 * It delegates the retrieval operation to the kitchenRepository's findById
-	 * method,
-	 * which returns an Optional containing the found Kitchen object.
-	 * If a Kitchen with the provided ID is found, it returns the Kitchen object
-	 * from the Optional.
-	 * If no Kitchen is found with the provided ID, it throws an
-	 * EntityNotFoundException
-	 * with an error message indicating that the Kitchen was not found.
+	 *  @param id the ID of the kitchen to be found
+	 *  @return the kitchen with the specified ID
+	 *  @throws KitchenNotFoundException if the kitchen with the specified ID
+	 *  is not found
 	 *
-	 * @param id the ID of the Kitchen to retrieve
-	 * @return the Kitchen object found by ID
-	 * @throws EntityNotFoundException if no Kitchen is found with the
-	 * provided ID
+	 *  @see KitchenRepository#findById
 	 */
-	public Kitchen findById(Long id) throws EntityNotFoundException {
+	public Kitchen findById(Long id) throws KitchenNotFoundException {
 		return this.kitchenRepository.findById(id)
-				.orElseThrow(() -> new EntityNotFoundException(
-						String.format(KITCHEN_NOT_FOUND, id)
-				));
+				.orElseThrow(() -> new KitchenNotFoundException(id));
 	}
 
 	/**
-	 * Saves a Kitchen.
+	 * Saves a kitchen.
+	 * This method saves the kitchen to the database.
+	 * The kitchen parameter is the kitchen to be saved.
+	 * The method first calls the save() method of the kitchenRepository to save
+	 * the kitchen to the database.
+	 * Then, the method returns the saved kitchen.
 	 *
-	 * This method handles the saving of a Kitchen in the system.
-	 * It delegates the saving operation to the underlying kitchenRepository,
-	 * which is responsible for persisting the Kitchen object.
-	 * If the saving is successful, it returns the saved Kitchen object.
+	 * @param kitchen the kitchen to be saved
+	 * @return the saved kitchen
 	 *
-	 * @param kitchen the Kitchen object to be saved
-	 * @return the saved Kitchen object
+	 * @see KitchenRepository#save
 	 */
 	public Kitchen save(Kitchen kitchen) {
 		return this.kitchenRepository.save(kitchen);
 	}
 
 	/**
-	 * Delete a Kitchen by ID.
+	 * Updates a kitchen by its ID.
+	 * This method updates the kitchen with the specified ID with the data
+	 * provided in the `kitchen` parameter.
+	 * The `kitchen` parameter contains the new values for the kitchen's
+	 * properties.
+	 * The `id` parameter is the ID of the kitchen to be updated.
+	 * The method first retrieves the kitchen with the specified ID from the
+	 * database using the `findById()` method of the `kitchenRepository`.
+	 * Then, the method copies the properties of the `kitchen` parameter to
+	 * the kitchen retrieved from the database, ignoring the `id` property.
+	 * Finally, the method saves the updated kitchen to the database using
+	 * the `save()` method of the `kitchenRepository`.
 	 *
-	 * This method handles the deletion of a Kitchen from the system based on the
-	 * provided ID.
-	 * It delegates the deletion operation to the kitchenRepository's deleteById
-	 * method.
-	 * If the Kitchen is successfully deleted, the method completes successfully.
-	 * If no Kitchen is found with the provided ID, it throws an
-	 * EntityNotFoundException
-	 * with an error message indicating that the Kitchen was not found.
-	 * If the Kitchen is currently in use and cannot be deleted, it throws an
-	 * EntityInUseException
-	 * with an error message indicating that the Kitchen is in use.
+	 * @param kitchen the kitchen with the new values
+	 * @param id the ID of the kitchen to be updated
 	 *
-	 * @param id the ID of the Kitchen to be deleted
-	 * @throws EntityInUseException if the Kitchen is currently in use and cannot
-	 * be deleted
-	 * @throws EntityNotFoundException if no Kitchen is found with the provided
-	 * ID
+	 * @return the updated kitchen
+	 *
+	 * @throws KitchenNotFoundException if the kitchen with the specified ID is
+	 * not found
+	 *
+	 * @see KitchenService#findById
+	 * @see KitchenRepository#save
 	 */
-	public void delete(Long id) throws EntityInUseException,
-			EntityNotFoundException {
+	public Kitchen update(Kitchen kitchen, Long id)
+			throws KitchenNotFoundException {
+
+		var kitchenFromDb = this.findById(id);
+		BeanUtils.copyProperties(kitchen, kitchenFromDb, "id");
+
+		return this.kitchenRepository.save(kitchenFromDb);
+	}
+
+	/**
+	 * Deletes a kitchen by its ID.
+	 * This method performs the deletion of a kitchen from the system based on
+	 * the provided ID.
+	 * It first attempts to delete the kitchen with the provided ID using the
+	 * `deleteById` method of the `kitchenRepository`.
+	 * If the deletion is successful, the method completes normally.
+	 * If no kitchen is found with the provided ID, it throws a
+	 * `KitchenNotFoundException` exception indicating that the kitchen was not
+	 * found.
+	 * If the kitchen is in use and cannot be deleted due to integrity
+	 * constraints, it throws a `KitchenInUseException` exception indicating
+	 * that the kitchen is in use and cannot be deleted.
+	 *
+	 * @param id the ID of the kitchen to be deleted
+	 * @throws KitchenNotFoundException if no kitchen is found with the provided
+	 * ID
+	 * @throws KitchenInUseException if the kitchen is in use and cannot be
+	 * deleted
+	 *
+	 * @see KitchenRepository#deleteById
+	 */
+	public void delete(Long id) throws KitchenNotFoundException,
+			KitchenInUseException {
 
 		try {
 			this.kitchenRepository.deleteById(id);
 		}
 		catch (EmptyResultDataAccessException exception) {
-			throw new EntityNotFoundException(
-					String.format(KITCHEN_NOT_FOUND, id)
-			);
+			throw new KitchenNotFoundException(id);
 		}
 		catch (DataIntegrityViolationException exception) {
-			throw new EntityInUseException(
-					String.format(KITCHEN_IN_USE, id)
-			);
+			throw new KitchenInUseException(id);
 		}
 	}
 }
