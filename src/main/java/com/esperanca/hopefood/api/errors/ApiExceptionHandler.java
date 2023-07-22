@@ -3,6 +3,7 @@ package com.esperanca.hopefood.api.errors;
 import com.esperanca.hopefood.domain.exceptions.BusinessLogicException;
 import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenInUseException;
 import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenNotFoundException;
+import com.esperanca.hopefood.domain.exceptions.restaurant.RestaurantNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -79,6 +80,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 		final HttpStatus STATUS = BAD_REQUEST;
 		final var ERROR = createErrorBuilder(STATUS.value(), BUSINESS_LOGIC,
+				exception.getMessage()
+		).build();
+		return handleExceptionInternal(exception, ERROR, new HttpHeaders(),
+				STATUS, request
+		);
+	}
+
+	@ExceptionHandler(RestaurantNotFoundException.class)
+	public ResponseEntity<?> handleRestaurantNotFound(WebRequest request,
+			RestaurantNotFoundException exception) {
+
+		final var STATUS = HttpStatus.NOT_FOUND;
+		final var ERROR = createErrorBuilder(STATUS.value(), RESTAURANT_NOT_FOUND,
 				exception.getMessage()
 		).build();
 		return handleExceptionInternal(exception, ERROR, new HttpHeaders(),
