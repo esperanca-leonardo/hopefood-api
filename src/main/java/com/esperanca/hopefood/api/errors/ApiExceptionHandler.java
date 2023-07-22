@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
 import static com.esperanca.hopefood.api.errors.ErrorType.*;
 import static java.util.Objects.isNull;
 import static org.springframework.http.HttpStatus.*;
@@ -44,11 +50,21 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 			MethodArgumentNotValidException ex, HttpHeaders headers,
 			HttpStatus status, WebRequest request) {
 
+		List<Field> fields = ex.getBindingResult()
+				.getFieldErrors()
+				.stream()
+				.map(fieldError ->
+					Field.builder()
+							.name(fieldError.getField())
+							.message(fieldError.getDefaultMessage())
+							.build()
+				).toList();
+
 		final HttpStatus STATUS = BAD_REQUEST;
 		final var ERROR = createErrorBuilder(STATUS.value(), INVALID_DATA,
 				"One or more fields are invalid. Please fill in the correct " +
 						"information and try again."
-		).build();
+		).fields(fields).build();
 		return handleExceptionInternal(ex, ERROR, headers, STATUS, request);
 	}
 
