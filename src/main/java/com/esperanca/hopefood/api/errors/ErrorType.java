@@ -9,7 +9,8 @@ public enum ErrorType {
 	ENTITY_NOT_FOUND("/entity-not-found", "Entity not found"),
 	KITCHEN_IN_USE("/kitchen-in-use", "Kitchen in use"),
 	KITCHEN_NOT_FOUND("/kitchen-not-found", "Kitchen not found"),
-	RESTAURANT_NOT_FOUND("/restaurant-not-found", "Restaurant not found");
+	RESTAURANT_NOT_FOUND("/restaurant-not-found", "Restaurant not found"),
+	INVALID_DATA("/invalid-data", "Invalid data");
 
 	private final String title;
 	private final String path;

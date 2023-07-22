@@ -7,6 +7,7 @@ import com.esperanca.hopefood.domain.exceptions.restaurant.RestaurantNotFoundExc
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -36,6 +37,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 					.build();
 		}
 		return super.handleExceptionInternal(ex, body, headers, status, request);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(
+			MethodArgumentNotValidException ex, HttpHeaders headers,
+			HttpStatus status, WebRequest request) {
+
+		final HttpStatus STATUS = BAD_REQUEST;
+		final var ERROR = createErrorBuilder(STATUS.value(), INVALID_DATA,
+				"One or more fields are invalid. Please fill in the correct " +
+						"information and try again."
+		).build();
+		return handleExceptionInternal(ex, ERROR, headers, STATUS, request);
 	}
 
 	private Error.ErrorBuilder createErrorBuilder(Integer status, ErrorType type,
