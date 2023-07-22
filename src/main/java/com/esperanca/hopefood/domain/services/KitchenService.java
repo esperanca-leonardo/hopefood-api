@@ -1,16 +1,19 @@
 package com.esperanca.hopefood.domain.services;
 
+import com.esperanca.hopefood.api.dtos.kitchens.KitchenInputDto;
+import com.esperanca.hopefood.api.dtos.kitchens.KitchenOutputDto;
 import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenInUseException;
 import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenNotFoundException;
 import com.esperanca.hopefood.domain.models.Kitchen;
 import com.esperanca.hopefood.domain.repositories.KitchenRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.BeanUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A service class for managing kitchens.
@@ -21,97 +24,47 @@ import java.util.List;
 @AllArgsConstructor
 public class KitchenService {
 
+	private ModelMapper modelMapper;
+
 	/**
 	 * The repository for kitchens.
 	 */
 	private KitchenRepository kitchenRepository;
 
-	/**
-	 * Finds all kitchens.
-	 * This method finds all kitchens in the database.
-	 * The method first calls the `findAll()` method of the `kitchenRepository`
-	 * to find all kitchens.
-	 * Then, the method returns the list of kitchens.
-	 *
-	 * @return the list of kitchens
-	 *
-	 * @see KitchenRepository#findAll
-	 */
-	public List<Kitchen> findAll() {
-		return this.kitchenRepository.findAll();
+	private KitchenOutputDto convertToOutputDto(Kitchen kitchen) {
+		return modelMapper.map(kitchen, KitchenOutputDto.class);
 	}
 
-	/**
-	 *  Finds a kitchen by its ID.
-	 *  This method finds the kitchen with the specified ID in the database.
-	 *  The id parameter is the ID of the kitchen to be found.
-	 *  The method first calls the findById() method of the kitchenRepository
-	 *  to find the kitchen with the specified ID.
-	 *  If the kitchen is found, the method returns the kitchen.
-	 *  If the kitchen is not found, the method throws a KitchenNotFoundException
-	 *  exception.
-	 *
-	 *  @param id the ID of the kitchen to be found
-	 *  @return the kitchen with the specified ID
-	 *  @throws KitchenNotFoundException if the kitchen with the specified ID
-	 *  is not found
-	 *
-	 *  @see KitchenRepository#findById
-	 */
-	public Kitchen findById(Long id) throws KitchenNotFoundException {
+	public List<KitchenOutputDto> findAll() {
+		return this.kitchenRepository.findAll()
+				.stream()
+				.map(this::convertToOutputDto)
+				.collect(Collectors.toList());
+	}
+
+	public KitchenOutputDto findById(Long id) throws KitchenNotFoundException {
 		return this.kitchenRepository.findById(id)
+				.map(this::convertToOutputDto)
 				.orElseThrow(() -> new KitchenNotFoundException(id));
 	}
 
-	/**
-	 * Saves a kitchen.
-	 * This method saves the kitchen to the database.
-	 * The kitchen parameter is the kitchen to be saved.
-	 * The method first calls the save() method of the kitchenRepository to save
-	 * the kitchen to the database.
-	 * Then, the method returns the saved kitchen.
-	 *
-	 * @param kitchen the kitchen to be saved
-	 * @return the saved kitchen
-	 *
-	 * @see KitchenRepository#save
-	 */
-	public Kitchen save(Kitchen kitchen) {
-		return this.kitchenRepository.save(kitchen);
+	public KitchenOutputDto save(KitchenInputDto kitchenInputDto) {
+		Kitchen kitchen = modelMapper.map(kitchenInputDto, Kitchen.class);
+		kitchen = this.kitchenRepository.save(kitchen);
+
+		return modelMapper.map(kitchen, KitchenOutputDto.class);
 	}
 
-	/**
-	 * Updates a kitchen by its ID.
-	 * This method updates the kitchen with the specified ID with the data
-	 * provided in the `kitchen` parameter.
-	 * The `kitchen` parameter contains the new values for the kitchen's
-	 * properties.
-	 * The `id` parameter is the ID of the kitchen to be updated.
-	 * The method first retrieves the kitchen with the specified ID from the
-	 * database using the `findById()` method of the `kitchenRepository`.
-	 * Then, the method copies the properties of the `kitchen` parameter to
-	 * the kitchen retrieved from the database, ignoring the `id` property.
-	 * Finally, the method saves the updated kitchen to the database using
-	 * the `save()` method of the `kitchenRepository`.
-	 *
-	 * @param kitchen the kitchen with the new values
-	 * @param id the ID of the kitchen to be updated
-	 *
-	 * @return the updated kitchen
-	 *
-	 * @throws KitchenNotFoundException if the kitchen with the specified ID is
-	 * not found
-	 *
-	 * @see KitchenService#findById
-	 * @see KitchenRepository#save
-	 */
-	public Kitchen update(Kitchen kitchen, Long id)
+	public KitchenOutputDto update(KitchenInputDto kitchenInputDto, Long id)
 			throws KitchenNotFoundException {
 
-		var kitchenFromDb = this.findById(id);
-		BeanUtils.copyProperties(kitchen, kitchenFromDb, "id");
+		var kitchen = kitchenRepository.findById(id)
+				.orElseThrow(() -> new KitchenNotFoundException(id));
 
-		return this.kitchenRepository.save(kitchenFromDb);
+		modelMapper.map(kitchenInputDto, kitchen);
+		kitchen = kitchenRepository.save(kitchen);
+
+		return modelMapper.map(kitchen, KitchenOutputDto.class);
 	}
 
 	/**
