@@ -1,11 +1,11 @@
 package com.esperanca.hopefood.domain.models;
 
+import com.esperanca.hopefood.domain.models.embeddables.Address;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -30,4 +30,7 @@ public class Restaurant {
 
   @ManyToMany
   private List<FormOfPayment> formOfPayments;
+
+  @Embedded
+  private Address address;
 }
