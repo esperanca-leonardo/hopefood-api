@@ -1,5 +1,6 @@
 package com.esperanca.hopefood.api.dtos.restaurant;
 
+import com.esperanca.hopefood.api.dtos.address.AddressOutputDto;
 import com.esperanca.hopefood.api.dtos.formofpayments.FormOfPaymentOutputDto;
 import com.esperanca.hopefood.api.dtos.kitchens.KitchenOutputDto;
 import lombok.Getter;
@@ -14,6 +15,7 @@ public class RestaurantOutputDto {
 	private Long id;
 	private String name;
 	private BigDecimal freightValue;
+	private AddressOutputDto address;
 	private KitchenOutputDto kitchen;
 	private List<FormOfPaymentOutputDto> formOfPayments;
 }
