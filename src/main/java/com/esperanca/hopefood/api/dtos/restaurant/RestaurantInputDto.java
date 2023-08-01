@@ -1,9 +1,25 @@
 package com.esperanca.hopefood.api.dtos.restaurant;
 
+import com.esperanca.hopefood.api.dtos.kitchens.KitchenIdInputDto;
+import lombok.Getter;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
-public record RestaurantInputDto(
-		String name,
-		BigDecimal freightValue,
-		Long kitchenId
-) { }
+@Getter
+public class RestaurantInputDto {
+
+	@NotBlank
+	private String name;
+
+	@NotNull
+	@PositiveOrZero
+	private BigDecimal freightValue;
+
+	@Valid
+	@NotNull
+	private KitchenIdInputDto kitchen;
+}
