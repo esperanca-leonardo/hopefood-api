@@ -1,10 +1,12 @@
 package com.esperanca.hopefood.api.dtos.restaurant;
 
+import com.esperanca.hopefood.api.dtos.formofpayments.FormOfPaymentOutputDto;
 import com.esperanca.hopefood.api.dtos.kitchens.KitchenOutputDto;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,4 +15,5 @@ public class RestaurantOutputDto {
 	private String name;
 	private BigDecimal freightValue;
 	private KitchenOutputDto kitchen;
+	private List<FormOfPaymentOutputDto> formOfPayments;
 }

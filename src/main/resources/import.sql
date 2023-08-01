@@ -14,6 +14,14 @@ INSERT INTO city (name, state_id) VALUES ('Angra dos Reis', 2);
 
 INSERT INTO form_of_payment (description) VALUES ('Cartão de Crédito');
 INSERT INTO form_of_payment (description) VALUES ('Boleto Bancário');
+INSERT INTO form_of_payment (description) VALUES ('Pix');
 
 INSERT INTO permission (name, description) VALUES ('Admin', 'Permissão de Administrador');
 INSERT INTO permission (name, description) VALUES ('Usuário', 'Permissão de Usuário');
+
+INSERT INTO restaurant_form_of_payments (restaurant_id, form_of_payments_id) VALUES (1, 1);
+INSERT INTO restaurant_form_of_payments (restaurant_id, form_of_payments_id) VALUES (1, 2);
+INSERT INTO restaurant_form_of_payments (restaurant_id, form_of_payments_id) VALUES (1, 3);
+INSERT INTO restaurant_form_of_payments (restaurant_id, form_of_payments_id) VALUES (2, 3);
+INSERT INTO restaurant_form_of_payments (restaurant_id, form_of_payments_id) VALUES (3, 2);
+INSERT INTO restaurant_form_of_payments (restaurant_id, form_of_payments_id) VALUES (3, 3);
