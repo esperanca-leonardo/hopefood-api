@@ -25,11 +25,11 @@ public class Group {
 	@ManyToMany
 	private List<Permission> permissions;
 
-	@JoinColumn(nullable = false, columnDefinition = "datetime")
+	@Column(nullable = false, columnDefinition = "datetime")
 	@CreationTimestamp
 	private OffsetDateTime createdAt;
 
-	@JoinColumn(nullable = false, columnDefinition = "datetime")
+	@Column(nullable = false, columnDefinition = "datetime")
 	@UpdateTimestamp
 	private OffsetDateTime updatedAt;
 }

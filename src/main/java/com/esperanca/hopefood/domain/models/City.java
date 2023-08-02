@@ -25,11 +25,11 @@ public class City {
 	@JoinColumn(nullable = false)
 	private State state;
 
-	@JoinColumn(nullable = false, columnDefinition = "datetime")
+	@Column(nullable = false, columnDefinition = "datetime")
 	@CreationTimestamp
 	private OffsetDateTime createdAt;
 
-	@JoinColumn(nullable = false, columnDefinition = "datetime")
+	@Column(nullable = false, columnDefinition = "datetime")
 	@UpdateTimestamp
 	private OffsetDateTime updatedAt;
 }

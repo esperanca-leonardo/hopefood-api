@@ -21,11 +21,11 @@ public class FormOfPayment {
 	@Column(nullable = false)
 	private String description;
 
-	@JoinColumn(nullable = false, columnDefinition = "datetime")
+	@Column(nullable = false, columnDefinition = "datetime")
 	@CreationTimestamp
 	private OffsetDateTime createdAt;
 
-	@JoinColumn(nullable = false, columnDefinition = "datetime")
+	@Column(nullable = false, columnDefinition = "datetime")
 	@UpdateTimestamp
 	private OffsetDateTime updatedAt;
 }

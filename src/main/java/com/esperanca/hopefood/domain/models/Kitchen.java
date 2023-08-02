@@ -28,11 +28,11 @@ public class Kitchen {
   @OneToMany(mappedBy = "kitchen")
   private List<Restaurant> restaurants;
 
-  @JoinColumn(nullable = false, columnDefinition = "datetime")
+  @Column(nullable = false, columnDefinition = "datetime")
   @CreationTimestamp
   private OffsetDateTime createdAt;
 
-  @JoinColumn(nullable = false, columnDefinition = "datetime")
+  @Column(nullable = false, columnDefinition = "datetime")
   @UpdateTimestamp
   private OffsetDateTime updatedAt;
 }
