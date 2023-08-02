@@ -1,6 +1,6 @@
-package com.esperanca.hopefood.api.dtos.address;
+package com.esperanca.hopefood.core.dtos.address;
 
-import com.esperanca.hopefood.api.dtos.city.CityOutputDto;
+import com.esperanca.hopefood.core.dtos.city.CityOutputDto;
 import lombok.Getter;
 import lombok.Setter;
 

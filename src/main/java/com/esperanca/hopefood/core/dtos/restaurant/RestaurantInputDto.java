@@ -1,6 +1,6 @@
-package com.esperanca.hopefood.api.dtos.restaurant;
+package com.esperanca.hopefood.core.dtos.restaurant;
 
-import com.esperanca.hopefood.api.dtos.kitchens.KitchenIdInputDto;
+import com.esperanca.hopefood.core.dtos.kitchens.KitchenIdInputDto;
 import lombok.Getter;
 
 import javax.validation.Valid;

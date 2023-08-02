@@ -1,6 +1,5 @@
-package com.esperanca.hopefood.api.dtos.city;
+package com.esperanca.hopefood.core.dtos.state;
 
-import com.esperanca.hopefood.api.dtos.state.StateOutputDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,10 +7,9 @@ import java.time.OffsetDateTime;
 
 @Getter
 @Setter
-public class CityOutputDto {
+public class StateOutputDto {
 	private Long id;
 	private String name;
 	private OffsetDateTime createdAt;
 	private OffsetDateTime updatedAt;
-	private StateOutputDto state;
 }

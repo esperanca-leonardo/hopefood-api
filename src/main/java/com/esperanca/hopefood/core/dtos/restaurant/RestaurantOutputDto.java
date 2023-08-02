@@ -1,8 +1,8 @@
-package com.esperanca.hopefood.api.dtos.restaurant;
+package com.esperanca.hopefood.core.dtos.restaurant;
 
-import com.esperanca.hopefood.api.dtos.address.AddressOutputDto;
-import com.esperanca.hopefood.api.dtos.formofpayments.FormOfPaymentOutputDto;
-import com.esperanca.hopefood.api.dtos.kitchens.KitchenOutputDto;
+import com.esperanca.hopefood.core.dtos.address.AddressOutputDto;
+import com.esperanca.hopefood.core.dtos.formofpayments.FormOfPaymentOutputDto;
+import com.esperanca.hopefood.core.dtos.kitchens.KitchenOutputDto;
 import lombok.Getter;
 import lombok.Setter;
 

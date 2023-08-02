@@ -1,7 +1,7 @@
 package com.esperanca.hopefood.api.controllers;
 
-import com.esperanca.hopefood.api.dtos.kitchens.KitchenInputDto;
-import com.esperanca.hopefood.api.dtos.kitchens.KitchenOutputDto;
+import com.esperanca.hopefood.core.dtos.kitchens.KitchenInputDto;
+import com.esperanca.hopefood.core.dtos.kitchens.KitchenOutputDto;
 import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenInUseException;
 import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenNotFoundException;
 import com.esperanca.hopefood.domain.services.KitchenService;

@@ -1,7 +1,7 @@
 package com.esperanca.hopefood.api.controllers;
 
-import com.esperanca.hopefood.api.dtos.restaurant.RestaurantInputDto;
-import com.esperanca.hopefood.api.dtos.restaurant.RestaurantOutputDto;
+import com.esperanca.hopefood.core.dtos.restaurant.RestaurantInputDto;
+import com.esperanca.hopefood.core.dtos.restaurant.RestaurantOutputDto;
 import com.esperanca.hopefood.domain.exceptions.BusinessLogicException;
 import com.esperanca.hopefood.domain.exceptions.restaurant.RestaurantNotFoundException;
 import com.esperanca.hopefood.domain.services.RestaurantService;

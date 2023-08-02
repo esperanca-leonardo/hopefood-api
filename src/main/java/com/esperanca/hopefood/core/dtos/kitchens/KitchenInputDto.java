@@ -1,4 +1,4 @@
-package com.esperanca.hopefood.api.dtos.kitchens;
+package com.esperanca.hopefood.core.dtos.kitchens;
 
 import lombok.*;
 
