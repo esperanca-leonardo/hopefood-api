@@ -37,6 +37,9 @@ public class Restaurant {
   @Embedded
   private Address address;
 
+  @OneToMany(mappedBy = "restaurant")
+  private List<Product> products;
+
   @JoinColumn(nullable = false, columnDefinition = "datetime")
   @CreationTimestamp
   private OffsetDateTime createdAt;

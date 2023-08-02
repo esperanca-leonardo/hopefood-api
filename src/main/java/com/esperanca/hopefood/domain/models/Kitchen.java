@@ -7,6 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -23,6 +24,9 @@ public class Kitchen {
 
   @Column(nullable = false)
   private String description;
+
+  @OneToMany(mappedBy = "kitchen")
+  private List<Restaurant> restaurants;
 
   @JoinColumn(nullable = false, columnDefinition = "datetime")
   @CreationTimestamp
