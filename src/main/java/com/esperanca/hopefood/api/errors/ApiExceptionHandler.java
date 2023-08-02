@@ -13,11 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 import static com.esperanca.hopefood.api.errors.ErrorType.*;
 import static java.util.Objects.isNull;
@@ -33,12 +30,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		if (isNull(body)) {
 			body = Error.builder()
 					.status(status.value())
+					.timestamp(OffsetDateTime.now().withNano(0))
 					.title(status.getReasonPhrase())
 					.build();
 		}
 		else if (body instanceof String) {
 			body = Error.builder()
 					.status(status.value())
+					.timestamp(OffsetDateTime.now().withNano(0))
 					.title((String) body)
 					.build();
 		}
@@ -73,6 +72,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return Error.builder()
 				.status(status)
+				.timestamp(OffsetDateTime.now().withNano(0))
 				.type(type.getPath())
 				.title(type.getTitle())
 				.detail(detail);

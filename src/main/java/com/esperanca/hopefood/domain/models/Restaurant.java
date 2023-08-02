@@ -3,9 +3,12 @@ package com.esperanca.hopefood.domain.models;
 import com.esperanca.hopefood.domain.models.embeddables.Address;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Data
@@ -33,4 +36,12 @@ public class Restaurant {
 
   @Embedded
   private Address address;
+
+  @JoinColumn(nullable = false, columnDefinition = "datetime")
+  @CreationTimestamp
+  private OffsetDateTime createdAt;
+
+  @JoinColumn(nullable = false, columnDefinition = "datetime")
+  @UpdateTimestamp
+  private OffsetDateTime updatedAt;
 }
