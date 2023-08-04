@@ -18,17 +18,13 @@ public class Permission {
 	@EqualsAndHashCode.Include
 	private Long id;
 
-	@Column(nullable = false)
 	private String name;
 
-	@Column(nullable = false)
 	private String description;
 
-	@JoinColumn(nullable = false, columnDefinition = "datetime")
 	@CreationTimestamp
 	private OffsetDateTime createdAt;
 
-	@JoinColumn(nullable = false, columnDefinition = "datetime")
 	@UpdateTimestamp
 	private OffsetDateTime updatedAt;
 }

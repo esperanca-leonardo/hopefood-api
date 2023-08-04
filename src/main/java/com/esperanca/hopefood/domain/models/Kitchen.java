@@ -19,20 +19,16 @@ public class Kitchen {
   @EqualsAndHashCode.Include
   private Long id;
 
-  @Column(nullable = false)
-  private String name;
+  private String nome;
 
-  @Column(nullable = false)
   private String description;
 
   @OneToMany(mappedBy = "kitchen")
   private List<Restaurant> restaurants;
 
-  @Column(nullable = false, columnDefinition = "datetime")
   @CreationTimestamp
   private OffsetDateTime createdAt;
 
-  @Column(nullable = false, columnDefinition = "datetime")
   @UpdateTimestamp
   private OffsetDateTime updatedAt;
 }

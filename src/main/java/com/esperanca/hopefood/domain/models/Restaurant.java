@@ -21,14 +21,11 @@ public class Restaurant {
   @EqualsAndHashCode.Include
   private Long id;
 
-  @Column(nullable = false)
   private String name;
 
-  @Column(nullable = false)
   private BigDecimal freightValue;
 
   @ManyToOne
-  @JoinColumn(nullable = false)
   private Kitchen kitchen;
 
   @ManyToMany
@@ -40,11 +37,9 @@ public class Restaurant {
   @OneToMany(mappedBy = "restaurant")
   private List<Product> products;
 
-  @Column(nullable = false, columnDefinition = "datetime")
   @CreationTimestamp
   private OffsetDateTime createdAt;
 
-  @Column(nullable = false, columnDefinition = "datetime")
   @UpdateTimestamp
   private OffsetDateTime updatedAt;
 }

@@ -18,14 +18,11 @@ public class State {
 	@EqualsAndHashCode.Include
 	private Long id;
 
-	@Column(nullable = false)
 	private String name;
 
-	@Column(nullable = false, columnDefinition = "datetime")
 	@CreationTimestamp
 	private OffsetDateTime createdAt;
 
-	@Column(nullable = false, columnDefinition = "datetime")
 	@UpdateTimestamp
 	private OffsetDateTime updatedAt;
 }

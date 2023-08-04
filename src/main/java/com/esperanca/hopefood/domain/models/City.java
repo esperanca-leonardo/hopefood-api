@@ -18,18 +18,14 @@ public class City {
 	@EqualsAndHashCode.Include
 	private Long id;
 
-	@Column(nullable = false)
 	private String name;
 
 	@ManyToOne
-	@JoinColumn(nullable = false)
 	private State state;
 
-	@Column(nullable = false, columnDefinition = "datetime")
 	@CreationTimestamp
 	private OffsetDateTime createdAt;
 
-	@Column(nullable = false, columnDefinition = "datetime")
 	@UpdateTimestamp
 	private OffsetDateTime updatedAt;
 }

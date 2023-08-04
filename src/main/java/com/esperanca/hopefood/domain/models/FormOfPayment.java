@@ -18,14 +18,11 @@ public class FormOfPayment {
 	@EqualsAndHashCode.Include
 	private Long id;
 
-	@Column(nullable = false)
 	private String description;
 
-	@Column(nullable = false, columnDefinition = "datetime")
 	@CreationTimestamp
 	private OffsetDateTime createdAt;
 
-	@Column(nullable = false, columnDefinition = "datetime")
 	@UpdateTimestamp
 	private OffsetDateTime updatedAt;
 }

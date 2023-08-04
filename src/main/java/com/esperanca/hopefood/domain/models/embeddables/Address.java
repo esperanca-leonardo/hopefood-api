@@ -4,7 +4,6 @@ import com.esperanca.hopefood.domain.models.City;
 import lombok.Data;
 
 import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Data
@@ -17,6 +16,5 @@ public class Address {
 	private String district;
 
 	@ManyToOne
-	@JoinColumn(nullable = false)
 	private City city;
 }
