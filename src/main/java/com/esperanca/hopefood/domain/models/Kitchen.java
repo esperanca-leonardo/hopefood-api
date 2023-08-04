@@ -19,8 +19,7 @@ public class Kitchen {
   @EqualsAndHashCode.Include
   private Long id;
 
-  private String nome;
-
+  private String name;
   private String description;
 
   @OneToMany(mappedBy = "kitchen")
