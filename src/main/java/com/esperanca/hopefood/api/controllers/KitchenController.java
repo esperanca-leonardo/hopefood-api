@@ -1,7 +1,8 @@
 package com.esperanca.hopefood.api.controllers;
 
-import com.esperanca.hopefood.core.dtos.kitchens.KitchenInputDto;
-import com.esperanca.hopefood.core.dtos.kitchens.KitchenOutputDto;
+import com.esperanca.hopefood.core.dtos.inputs.kitchen.KitchenInputDto;
+import com.esperanca.hopefood.core.dtos.outputs.kitchen.KitchenCompleteOutputDto;
+import com.esperanca.hopefood.core.dtos.outputs.kitchen.KitchenSummaryOutputDto;
 import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenInUseException;
 import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenNotFoundException;
 import com.esperanca.hopefood.domain.services.KitchenService;
@@ -22,26 +23,28 @@ public class KitchenController {
 
 	@GetMapping
 	@ResponseStatus(OK)
-	public List<KitchenOutputDto> findAll() {
+	public List<KitchenSummaryOutputDto> findAll() {
 		return kitchenService.findAll();
 	}
 
 	@GetMapping("/{id}")
 	@ResponseStatus(OK)
-	public KitchenOutputDto findById(@PathVariable Long id) throws KitchenNotFoundException {
+	public KitchenCompleteOutputDto findById(@PathVariable Long id)
+			throws KitchenNotFoundException {
 		return kitchenService.findById(id);
 	}
 
 	@PostMapping
 	@ResponseStatus(CREATED)
-	public KitchenOutputDto save(@RequestBody @Valid KitchenInputDto kitchenInputDto) {
+	public KitchenCompleteOutputDto save(@RequestBody @Valid KitchenInputDto
+			kitchenInputDto) {
 		return kitchenService.save(kitchenInputDto);
 	}
 
 	@PutMapping("/{id}")
 	@ResponseStatus(OK)
-	public KitchenOutputDto update(@RequestBody @Valid KitchenInputDto kitchenInputDto,
-			@PathVariable Long id) throws KitchenNotFoundException {
+	public KitchenCompleteOutputDto update(@RequestBody @Valid KitchenInputDto
+			kitchenInputDto, @PathVariable Long id) throws KitchenNotFoundException {
 		return kitchenService.update(kitchenInputDto, id);
 	}
 
