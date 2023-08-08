@@ -8,8 +8,8 @@ CREATE TABLE restaurant (
 
   address_cep VARCHAR(255) NOT NULL,
   address_public_place VARCHAR(255) NOT NULL,
-  address_number VARCHAR(255),
-  address_complement VARCHAR(255) NOT NULL,
+  address_number VARCHAR(255) NOT NULL,
+  address_complement VARCHAR(255),
   address_district VARCHAR(255) NOT NULL,
 
   created_at DATETIME NOT NULL,
