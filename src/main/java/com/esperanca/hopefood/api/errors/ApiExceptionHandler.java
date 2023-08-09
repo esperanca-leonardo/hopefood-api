@@ -1,6 +1,8 @@
 package com.esperanca.hopefood.api.errors;
 
 import com.esperanca.hopefood.domain.exceptions.BusinessLogicException;
+import com.esperanca.hopefood.domain.exceptions.city.CityInUseException;
+import com.esperanca.hopefood.domain.exceptions.city.CityNotFoundException;
 import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenInUseException;
 import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenNotFoundException;
 import com.esperanca.hopefood.domain.exceptions.restaurant.RestaurantNotFoundException;
@@ -25,6 +27,17 @@ import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
+
+	private Error.ErrorBuilder createErrorBuilder(Integer status, ErrorType type,
+			String detail) {
+
+		return Error.builder()
+				.status(status)
+				.detail(detail)
+				.type(type.getPath())
+				.title(type.getTitle())
+				.timestamp(createTimestampWithZeroNanos());
+	}
 
 	private List<Field> extractFieldErrors(MethodArgumentNotValidException exception) {
 		return exception.getBindingResult()
@@ -81,45 +94,6 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(ex, ERROR, headers, STATUS, request);
 	}
 
-	private Error.ErrorBuilder createErrorBuilder(Integer status, ErrorType type,
-			String detail) {
-
-		return Error.builder()
-				.status(status)
-				.detail(detail)
-				.type(type.getPath())
-				.title(type.getTitle())
-				.timestamp(createTimestampWithZeroNanos());
-	}
-
-	@ExceptionHandler(KitchenNotFoundException.class)
-	public ResponseEntity<?> handleKitchenNotFound(WebRequest request,
-			KitchenNotFoundException exception) {
-
-		final HttpStatus STATUS = NOT_FOUND;
-		final var ERROR = createErrorBuilder(STATUS.value(), KITCHEN_NOT_FOUND,
-				exception.getMessage()
-		).build();
-
-		return handleExceptionInternal(exception, ERROR, new HttpHeaders(),
-				STATUS, request
-		);
-	}
-
-	@ExceptionHandler(KitchenInUseException.class)
-	public ResponseEntity<?> handleKitchenInUse(WebRequest request,
-			KitchenInUseException exception) {
-
-		final HttpStatus STATUS = CONFLICT;
-		final var ERROR = createErrorBuilder(STATUS.value(), KITCHEN_IN_USE,
-				exception.getMessage()
-		).build();
-
-		return handleExceptionInternal(exception, ERROR, new HttpHeaders(),
-				STATUS, request
-		);
-	}
-
 	@ExceptionHandler(BusinessLogicException.class)
 	public ResponseEntity<?> handleBusinessLogic(WebRequest request,
 			BusinessLogicException exception) {
@@ -148,6 +122,34 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 		);
 	}
 
+	@ExceptionHandler(KitchenInUseException.class)
+	public ResponseEntity<?> handleKitchenInUse(WebRequest request,
+			KitchenInUseException exception) {
+
+		final HttpStatus STATUS = CONFLICT;
+		final var ERROR = createErrorBuilder(STATUS.value(), KITCHEN_IN_USE,
+				exception.getMessage()
+		).build();
+
+		return handleExceptionInternal(exception, ERROR, new HttpHeaders(),
+				STATUS, request
+		);
+	}
+
+	@ExceptionHandler(KitchenNotFoundException.class)
+	public ResponseEntity<?> handleKitchenNotFound(WebRequest request,
+			KitchenNotFoundException exception) {
+
+		final HttpStatus STATUS = NOT_FOUND;
+		final var ERROR = createErrorBuilder(STATUS.value(), KITCHEN_NOT_FOUND,
+				exception.getMessage()
+		).build();
+
+		return handleExceptionInternal(exception, ERROR, new HttpHeaders(),
+				STATUS, request
+		);
+	}
+
 	@ExceptionHandler(StateNotFoundException.class)
 	public ResponseEntity<?> handleStateNotFound(WebRequest request,
 			StateNotFoundException exception) {
@@ -168,6 +170,34 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 		final HttpStatus STATUS = CONFLICT;
 		final var ERROR = createErrorBuilder(STATUS.value(), STATE_IN_USE,
+				exception.getMessage()
+		).build();
+
+		return handleExceptionInternal(exception, ERROR, new HttpHeaders(),
+				STATUS, request
+		);
+	}
+
+	@ExceptionHandler(CityNotFoundException.class)
+	public ResponseEntity<?> handleCityNotFound(WebRequest request,
+			CityNotFoundException exception) {
+
+		final HttpStatus STATUS = NOT_FOUND;
+		final var ERROR = createErrorBuilder(STATUS.value(), CITY_NOT_FOUND,
+				exception.getMessage()
+		).build();
+
+		return handleExceptionInternal(exception, ERROR, new HttpHeaders(),
+				STATUS, request
+		);
+	}
+
+	@ExceptionHandler(CityInUseException.class)
+	public ResponseEntity<?> handleCityInUse(WebRequest request,
+			CityInUseException exception) {
+
+		final HttpStatus STATUS = CONFLICT;
+		final var ERROR = createErrorBuilder(STATUS.value(), CITY_IN_USE,
 				exception.getMessage()
 		).build();
 
