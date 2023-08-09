@@ -2,8 +2,6 @@ package com.esperanca.hopefood.core.dtos.inputs.restaurant;
 
 import com.esperanca.hopefood.core.dtos.inputs.address.AddressInputDto;
 import com.esperanca.hopefood.core.dtos.inputs.kitchen.KitchenIdInputDto;
-import com.esperanca.hopefood.core.dtos.outputs.address.AddressOutputDto;
-import com.esperanca.hopefood.core.dtos.outputs.city.CityOutputDto;
 import lombok.Getter;
 
 import javax.validation.Valid;
@@ -20,7 +18,7 @@ public class RestaurantInputDto {
 
 	@NotNull
 	@PositiveOrZero
-	private BigDecimal freightValue;
+	private BigDecimal freighValue;
 
 	@Valid
 	@NotNull
