@@ -80,9 +80,11 @@ public class KitchenService {
 		return convertToCompleteDto(kitchen);
 	}
 
+	@Transactional
 	public void delete(Long id) throws KitchenNotFoundException, KitchenInUseException {
 		try {
 			kitchenRepository.deleteById(id);
+			kitchenRepository.flush();
 		}
 		catch (EmptyResultDataAccessException exception) {
 			throw new KitchenNotFoundException(id);
