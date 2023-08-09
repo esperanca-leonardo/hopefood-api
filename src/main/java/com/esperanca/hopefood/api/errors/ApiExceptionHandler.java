@@ -4,6 +4,8 @@ import com.esperanca.hopefood.domain.exceptions.BusinessLogicException;
 import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenInUseException;
 import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenNotFoundException;
 import com.esperanca.hopefood.domain.exceptions.restaurant.RestaurantNotFoundException;
+import com.esperanca.hopefood.domain.exceptions.state.StateInUseException;
+import com.esperanca.hopefood.domain.exceptions.state.StateNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -138,6 +140,34 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
 		final HttpStatus STATUS = NOT_FOUND;
 		final var ERROR = createErrorBuilder(STATUS.value(), RESTAURANT_NOT_FOUND,
+				exception.getMessage()
+		).build();
+
+		return handleExceptionInternal(exception, ERROR, new HttpHeaders(),
+				STATUS, request
+		);
+	}
+
+	@ExceptionHandler(StateNotFoundException.class)
+	public ResponseEntity<?> handleStateNotFound(WebRequest request,
+			StateNotFoundException exception) {
+
+		final HttpStatus STATUS = NOT_FOUND;
+		final var ERROR = createErrorBuilder(STATUS.value(), STATE_NOT_FOUND,
+				exception.getMessage()
+		).build();
+
+		return handleExceptionInternal(exception, ERROR, new HttpHeaders(),
+				STATUS, request
+		);
+	}
+
+	@ExceptionHandler(StateInUseException.class)
+	public ResponseEntity<?> handleStateInUse(WebRequest request,
+			StateInUseException exception) {
+
+		final HttpStatus STATUS = CONFLICT;
+		final var ERROR = createErrorBuilder(STATUS.value(), STATE_IN_USE,
 				exception.getMessage()
 		).build();
 

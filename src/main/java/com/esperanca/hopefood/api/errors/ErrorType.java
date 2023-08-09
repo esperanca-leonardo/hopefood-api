@@ -10,6 +10,8 @@ public enum ErrorType {
 	KITCHEN_IN_USE("/kitchen-in-use", "Kitchen in use"),
 	KITCHEN_NOT_FOUND("/kitchen-not-found", "Kitchen not found"),
 	RESTAURANT_NOT_FOUND("/restaurant-not-found", "Restaurant not found"),
+	STATE_IN_USE("/state-in-use", "State in use"),
+	STATE_NOT_FOUND("/state-not-found", "State not found"),
 	INVALID_DATA("/invalid-data", "Invalid data");
 
 	private final String title;
