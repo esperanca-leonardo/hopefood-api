@@ -1,12 +1,12 @@
 package com.esperanca.hopefood.api.controllers;
 
 import com.esperanca.hopefood.core.dtos.inputs.state.StateInputDto;
-import com.esperanca.hopefood.core.dtos.outputs.state.StateCompleteOutputDto;
-import com.esperanca.hopefood.core.dtos.outputs.state.StateSummaryOutputDto;
+import com.esperanca.hopefood.core.dtos.outputs.state.StateCompleteDto;
+import com.esperanca.hopefood.core.dtos.outputs.state.StateSummaryDto;
 import com.esperanca.hopefood.domain.exceptions.state.StateInUseException;
 import com.esperanca.hopefood.domain.exceptions.state.StateNotFoundException;
 import com.esperanca.hopefood.domain.services.StateService;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,39 +16,41 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/states")
-@AllArgsConstructor
 public class StateController {
 
-	private StateService stateService;
+	@Autowired
+	private StateService service;
 
 	@GetMapping
 	@ResponseStatus(OK)
-	public List<StateSummaryOutputDto> findAll() {
-		return stateService.findAll();
+	public List<StateSummaryDto> findAll() {
+		return service.findAll();
 	}
 
 	@GetMapping("/{id}")
 	@ResponseStatus(OK)
-	public StateCompleteOutputDto findById(@PathVariable Long id) throws StateNotFoundException {
-		return stateService.findById(id);
+	public StateCompleteDto findById(@PathVariable Long id)
+			throws StateNotFoundException {
+		return service.findById(id);
 	}
 
 	@PostMapping
 	@ResponseStatus(CREATED)
-	public StateCompleteOutputDto save(@RequestBody @Valid StateInputDto stateInputDto) {
-		return stateService.save(stateInputDto);
+	public StateCompleteDto save(@RequestBody @Valid StateInputDto stateInputDto) {
+		return service.save(stateInputDto);
 	}
 
 	@PutMapping("/{id}")
 	@ResponseStatus(OK)
-	public StateCompleteOutputDto update(@RequestBody @Valid StateInputDto stateInputDto,
-			@PathVariable Long id) throws StateNotFoundException {
-		return stateService.update(stateInputDto, id);
+	public StateCompleteDto update(@RequestBody @Valid StateInputDto
+			stateInputDto, @PathVariable Long id) throws StateNotFoundException {
+		return service.update(stateInputDto, id);
 	}
 
 	@DeleteMapping("/{id}")
 	@ResponseStatus(NO_CONTENT)
-	public void delete(@PathVariable Long id) throws StateNotFoundException, StateInUseException {
-		stateService.delete(id);
+	public void delete(@PathVariable Long id) throws
+			StateNotFoundException, StateInUseException {
+		service.delete(id);
 	}
 }
