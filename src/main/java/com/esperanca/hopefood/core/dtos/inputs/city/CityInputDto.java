@@ -1,6 +1,8 @@
 package com.esperanca.hopefood.core.dtos.inputs.city;
 
+import com.esperanca.hopefood.core.annotations.Exists;
 import com.esperanca.hopefood.core.dtos.inputs.state.StateIdInputDto;
+import com.esperanca.hopefood.domain.models.State;
 import lombok.Getter;
 
 import javax.validation.Valid;
@@ -15,5 +17,6 @@ public class CityInputDto {
 
 	@Valid
 	@NotNull
+	@Exists(targetClass = State.class)
 	private StateIdInputDto state;
 }

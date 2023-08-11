@@ -1,6 +1,8 @@
 package com.esperanca.hopefood.core.dtos.inputs.address;
 
+import com.esperanca.hopefood.core.annotations.Exists;
 import com.esperanca.hopefood.core.dtos.inputs.city.CityIdInputDto;
+import com.esperanca.hopefood.domain.models.City;
 import lombok.Getter;
 
 import javax.validation.Valid;
@@ -26,5 +28,6 @@ public class AddressInputDto {
 
 	@Valid
 	@NotNull
+	@Exists(targetClass = City.class)
 	private CityIdInputDto city;
 }
