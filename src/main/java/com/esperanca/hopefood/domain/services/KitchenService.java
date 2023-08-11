@@ -1,13 +1,13 @@
 package com.esperanca.hopefood.domain.services;
 
 import com.esperanca.hopefood.core.dtos.inputs.kitchen.KitchenInputDto;
-import com.esperanca.hopefood.core.dtos.outputs.kitchen.KitchenCompleteOutputDto;
-import com.esperanca.hopefood.core.dtos.outputs.kitchen.KitchenSummaryOutputDto;
+import com.esperanca.hopefood.core.dtos.outputs.kitchen.KitchenCompleteDto;
+import com.esperanca.hopefood.core.dtos.outputs.kitchen.KitchenSummaryDto;
 import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenInUseException;
 import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenNotFoundException;
 import com.esperanca.hopefood.domain.models.Kitchen;
 import com.esperanca.hopefood.domain.repositories.KitchenRepository;
-import com.esperanca.hopefood.domain.services.converters.GenericConverter;
+import com.esperanca.hopefood.domain.services.utils.converters.impl.KitchenConverterImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -23,68 +23,55 @@ import static org.springframework.beans.BeanUtils.copyProperties;
 @AllArgsConstructor
 public class KitchenService {
 
-	private KitchenRepository kitchenRepository;
+	private KitchenRepository repository;
 
-	private GenericConverter<Kitchen, KitchenCompleteOutputDto,
-			KitchenInputDto, KitchenSummaryOutputDto> kitchenConverter;
-
-	private Kitchen convertToEntity(KitchenInputDto kitchenInputDto) {
-		return kitchenConverter.convertToEntity(kitchenInputDto, Kitchen.class);
-	}
-
-	private KitchenSummaryOutputDto convertToSummaryDto(Kitchen kitchen) {
-		return kitchenConverter.convertToSummaryDto(kitchen, KitchenSummaryOutputDto.class);
-	}
-	
-	private KitchenCompleteOutputDto convertToCompleteDto(Kitchen kitchen) {
-		return kitchenConverter.convertToCompleteDto(kitchen, KitchenCompleteOutputDto.class);
-	}
+	private KitchenConverterImpl converter;
 
 	@Transactional(readOnly = true)
-	public List<KitchenSummaryOutputDto> findAll() {
-		return kitchenRepository.findAll()
+	public List<KitchenSummaryDto> findAll() {
+		return repository.findAll()
 				.stream()
-				.map(this::convertToSummaryDto)
+				.map(kitchen -> converter.toSummary(kitchen))
 				.toList();
 	}
 
 	@Transactional(readOnly = true)
 	public Kitchen findKitchenById(Long id) throws KitchenNotFoundException {
-		return kitchenRepository.findById(id)
+		return repository.findById(id)
 				.orElseThrow(() -> new KitchenNotFoundException(id));
 	}
 
 	@Transactional(readOnly = true)
-	public KitchenCompleteOutputDto findById(Long id) throws KitchenNotFoundException {
-		return kitchenRepository.findById(id)
-				.map(this::convertToCompleteDto)
+	public KitchenCompleteDto findById(Long id) throws KitchenNotFoundException {
+		return repository.findById(id)
+				.map(kitchen -> converter.toCompleteDto(kitchen))
 				.orElseThrow(() -> new KitchenNotFoundException(id));
 	}
 
 	@Transactional
-	public KitchenCompleteOutputDto save(KitchenInputDto kitchenInputDto) {
-		Kitchen kitchen = convertToEntity(kitchenInputDto);
-		kitchen = kitchenRepository.save(kitchen);
+	public KitchenCompleteDto save(KitchenInputDto kitchenInputDto) {
+		Kitchen kitchen = converter.toEntity(kitchenInputDto);
+		kitchen = repository.save(kitchen);
 
-		return convertToCompleteDto(kitchen);
+		return converter.toCompleteDto(kitchen);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public KitchenCompleteOutputDto update(KitchenInputDto kitchenInputDto, Long id)
+	public KitchenCompleteDto update(KitchenInputDto kitchenInputDto, Long id)
 			throws KitchenNotFoundException {
 
 		Kitchen kitchen = findKitchenById(id);
 		copyProperties(kitchenInputDto, kitchen);
-		kitchen = kitchenRepository.save(kitchen);
+		kitchen = repository.save(kitchen);
 
-		return convertToCompleteDto(kitchen);
+		return converter.toCompleteDto(kitchen);
 	}
 
 	@Transactional
 	public void delete(Long id) throws KitchenNotFoundException, KitchenInUseException {
 		try {
-			kitchenRepository.deleteById(id);
-			kitchenRepository.flush();
+			repository.deleteById(id);
+			repository.flush();
 		}
 		catch (EmptyResultDataAccessException exception) {
 			throw new KitchenNotFoundException(id);

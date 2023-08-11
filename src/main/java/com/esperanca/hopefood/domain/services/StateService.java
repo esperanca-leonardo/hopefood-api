@@ -1,13 +1,13 @@
 package com.esperanca.hopefood.domain.services;
 
 import com.esperanca.hopefood.core.dtos.inputs.state.StateInputDto;
-import com.esperanca.hopefood.core.dtos.outputs.state.StateCompleteOutputDto;
-import com.esperanca.hopefood.core.dtos.outputs.state.StateSummaryOutputDto;
+import com.esperanca.hopefood.core.dtos.outputs.state.StateCompleteDto;
+import com.esperanca.hopefood.core.dtos.outputs.state.StateSummaryDto;
 import com.esperanca.hopefood.domain.exceptions.state.StateInUseException;
 import com.esperanca.hopefood.domain.exceptions.state.StateNotFoundException;
 import com.esperanca.hopefood.domain.models.State;
 import com.esperanca.hopefood.domain.repositories.StateRepository;
-import com.esperanca.hopefood.domain.services.converters.GenericConverter;
+import com.esperanca.hopefood.domain.services.utils.converters.impl.StateConverterImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -23,68 +23,55 @@ import static org.springframework.beans.BeanUtils.copyProperties;
 @AllArgsConstructor
 public class StateService {
 
-	private StateRepository stateRepository;
+	private StateRepository repository;
 
-	private GenericConverter<State, StateCompleteOutputDto, StateInputDto,
-			StateSummaryOutputDto> stateConverter;
-
-	private State convertToEntity(StateInputDto stateInputDto) {
-		return stateConverter.convertToEntity(stateInputDto, State.class);
-	}
-
-	private StateSummaryOutputDto convertToSummaryDto(State state) {
-		return stateConverter.convertToSummaryDto(state, StateSummaryOutputDto.class);
-	}
-
-	private StateCompleteOutputDto convertToCompleteDto(State state) {
-		return stateConverter.convertToCompleteDto(state, StateCompleteOutputDto.class);
-	}
+	private StateConverterImpl converter;
 
 	@Transactional(readOnly = true)
-	public List<StateSummaryOutputDto> findAll() {
-		return stateRepository.findAll()
+	public List<StateSummaryDto> findAll() {
+		return repository.findAll()
 				.stream()
-				.map(this::convertToSummaryDto)
+				.map(state -> converter.toSummary(state))
 				.toList();
 	}
 
 	@Transactional(readOnly = true)
 	public State findStateById(Long id) throws StateNotFoundException {
-		return stateRepository.findById(id)
+		return repository.findById(id)
 				.orElseThrow(() -> new StateNotFoundException(id));
 	}
 
 	@Transactional(readOnly = true)
-	public StateCompleteOutputDto findById(Long id) throws StateNotFoundException {
-		return stateRepository.findById(id)
-				.map(this::convertToCompleteDto)
+	public StateCompleteDto findById(Long id) throws StateNotFoundException {
+		return repository.findById(id)
+				.map(state -> converter.toCompleteDto(state))
 				.orElseThrow(() -> new StateNotFoundException(id));
 	}
 
 	@Transactional
-	public StateCompleteOutputDto save(StateInputDto stateInputDto) {
-		State state = convertToEntity(stateInputDto);
-		state = stateRepository.save(state);
+	public StateCompleteDto save(StateInputDto stateInputDto) {
+		State state = converter.toEntity(stateInputDto);
+		state = repository.save(state);
 
-		return convertToCompleteDto(state);
+		return converter.toCompleteDto(state);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public StateCompleteOutputDto update(StateInputDto stateInputDto, Long id)
+	public StateCompleteDto update(StateInputDto stateInputDto, Long id)
 			throws StateNotFoundException {
 
 		State state = findStateById(id);
 		copyProperties(stateInputDto, state);
-		state = stateRepository.save(state);
+		state = repository.save(state);
 
-		return convertToCompleteDto(state);
+		return converter.toCompleteDto(state);
 	}
 
 	@Transactional
 	public void delete(Long id) throws StateNotFoundException, StateInUseException {
 		try {
-			stateRepository.deleteById(id);
-			stateRepository.flush();
+			repository.deleteById(id);
+			repository.flush();
 		}
 		catch (EmptyResultDataAccessException exception) {
 			throw new StateNotFoundException(id);
