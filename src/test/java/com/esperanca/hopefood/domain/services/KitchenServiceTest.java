@@ -3,7 +3,7 @@
 //import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenInUseException;
 //import com.esperanca.hopefood.domain.exceptions.kitchen.KitchenNotFoundException;
 //import com.esperanca.hopefood.domain.models.Kitchen;
-//import com.esperanca.hopefood.domain.repositories.KitchenRepository;
+//import com.esperanca.hopefood.kitchen.repositories.KitchenRepository;
 //import org.junit.jupiter.api.DisplayName;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
